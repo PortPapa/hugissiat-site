@@ -53,3 +53,12 @@
   .v2 .panel{position:static;max-height:none}
   .v2 .paper.mobile{max-width:100%}
 }
+
+.v2 .steps{grid-template-columns:repeat(3,1fr)}
+.v2 .pv-top{justify-content:space-between;align-items:center;gap:10px}
+.v2 #sampleChips{margin:0}.v2 #sampleChips button.on{background:var(--ink);color:#fff;border-color:var(--ink)}
+.dstat{margin-top:12px;font-size:13.5px;color:var(--sub);line-height:1.6}
+.dstat .ok{color:var(--sage-d);font-weight:700}.dstat .bad{color:#b4482f;font-weight:700}
+.dstat .bar{height:6px;border-radius:9px;background:var(--bg);overflow:hidden;margin:8px 0}.dstat .bar i{display:block;height:100%;background:var(--sage);transition:width .3s}
+.inst{margin-top:18px;padding-top:4px;border-top:1px solid var(--line)}
+.cmd{background:var(--bg);border-radius:12px;padding:12px 14px;font-size:14px;line-height:1.5;margin-bottom:8px;user-select:all}

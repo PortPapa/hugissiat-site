@@ -248,7 +248,7 @@ function renderDesign() {
   if ($('#myColor')) renderMyColor();
 }
 // 단계 탭
-let step = 'src';
+let step = 'blog';
 function goStep(k) {
   step = k;
   document.querySelectorAll('#steps button').forEach(b => b.classList.toggle('on', b.dataset.step === k));
@@ -450,7 +450,7 @@ function buildProfile() {
   if (d.notice === 'top') order.unshift('0. 대가 표기');
   const en = top(sum(ps, 'endings')).slice(0, 6).map(([k]) => '~' + k);
   const avg = ps.length ? Math.round(ps.reduce((a, q) => a + q.avgParaLen, 0) / ps.length) : 0;
-  const json = { v: 1, blog: st.blog, name: p.name, template: tpl.id, design: d, refs: ps.slice(0, 6).map(q => q.url) };
+  const json = { v: 2, blogId: st.myBlog || st.blog, blog: st.blog, name: p.name, template: tpl.id, design: d, refs: ps.slice(0, 6).map(q => q.url) };
   return `---
 hugissiat_style: 1
 blog: ${st.blog || '(미지정)'}
@@ -495,7 +495,8 @@ ${JSON.stringify(json, null, 2)}
 `;
 }
 window.HS_buildProfile = buildProfile;
-$('#dl').onclick = () => {
+$('#dl').onclick = (e) => {
+  if (e) e.preventDefault();
   const md = buildProfile(); const b = new Blob([md], { type: 'text/markdown;charset=utf-8' });
   const a = document.createElement('a'); a.href = URL.createObjectURL(b); a.download = `후기씨앗 글쓰기 설정 - ${prof().name || st.blog || '내 블로그'}.md`; a.click(); setTimeout(() => URL.revokeObjectURL(a.href), 2000);
   toast('설정 파일을 받았어요');
@@ -530,7 +531,75 @@ fetch('/api/me').then(r => r.ok ? r.json() : null).then(j => {
   $('#acctDel').onclick = async () => { if (!confirm('계정과 저장된 설정을 모두 지울까요? 되돌릴 수 없어요.')) return; await fetch('/api/me/delete', { method: 'POST' }); localStorage.removeItem(LS); localStorage.removeItem(LS + '-synced'); location.href = '/'; };
   fetch('/api/state').then(r => r.json()).then(x => { if (x.ok && x.state && x.state.profiles && !localStorage.getItem(LS + '-synced')) { st = { ...st, ...x.state }; localStorage.setItem(LS + '-synced', '1'); save(); setMode(st.mode || 'kw'); renderAll(); } });
   if (st.palette && st.palette.v !== 3) st.palette = null;
-  if (!st.palette && st.myBlog) loadMyColor(st.myBlog); else if (!st.palette && j.blogGuess) loadMyColor(j.blogGuess, true); else renderMyColor();
+  if (st.myBlog) { if (!st.palette) loadMyColor(st.myBlog); else renderMyColor(); }
+  else if (j.blogGuess) useMyBlog(j.blogGuess, true);
 }).catch(() => {});
-if (!st.blog) analyze('kw:맛집 후기');
+// 내 블로그
+async function useMyBlog(id, silent) {
+  id = String(id || '').trim().replace(/^https?:\/\/(m\.)?blog\.naver\.com\//, '').split(/[/?#]/)[0];
+  if (!/^[A-Za-z0-9_-]{3,40}$/.test(id)) { if (!silent) toast('블로그 주소를 확인해 주세요'); return; }
+  $('#myId').value = id;
+  st.myBlog = id; save();
+  await analyze(id);
+  if (!prof().ana) { if (silent) { st.myBlog = ''; save(); } return; }
+  await loadMyColor(id);
+}
+$('#myForm').onsubmit = e => { e.preventDefault(); useMyBlog($('#myId').value); };
+// 미리보기 글 종류
+const SAMPLE = { food: '맛집', kids: '아이랑', stay: '숙소', product: '제품', summary: '요약', compare: '비교' };
+function renderSamples() { $('#sampleChips').innerHTML = T.map(t => '<button type="button" data-t="' + t.id + '" class="' + (st.tpl === t.id ? 'on' : '') + '">' + (SAMPLE[t.id] || t.name) + '</button>').join(''); $('#sampleChips').querySelectorAll('button').forEach(b => b.onclick = () => { st.tpl = b.dataset.t; save(); renderSamples(); renderDoc(); }); }
+renderSamples();
+// 구글 드라이브에 저장 (앱과 같은 프로젝트, drive.file)
+const DRIVE_CID = '731351412207-vbm5q4umb6hicosg58lef1khioe5g9ak.apps.googleusercontent.com';
+let driveTok = null;
+function getDriveToken() {
+  return new Promise((res, rej) => {
+    if (!window.google || !google.accounts || !google.accounts.oauth2) return rej(new Error('구글 연결 준비 중이에요. 잠시 후 다시 눌러 주세요.'));
+    const c = google.accounts.oauth2.initTokenClient({ client_id: DRIVE_CID, scope: 'https://www.googleapis.com/auth/drive.file', prompt: '', callback: r => r && r.access_token ? res(r.access_token) : rej(new Error('구글 드라이브 연결을 취소했어요')), error_callback: e => rej(new Error(e && e.type === 'popup_closed' ? '연결 창을 닫았어요' : '구글 드라이브 연결에 실패했어요')) });
+    c.requestAccessToken();
+  });
+}
+async function gd(path, opt = {}) { const r = await fetch('https://www.googleapis.com/' + path, { ...opt, headers: { Authorization: 'Bearer ' + driveTok, ...(opt.headers || {}) } }); if (!r.ok) throw new Error('드라이브 오류 ' + r.status); return r.json(); }
+async function gFolder(name, parent) {
+  const q = encodeURIComponent("name = '" + name.replace(/'/g, "\\'") + "' and '" + parent + "' in parents and mimeType = 'application/vnd.google-apps.folder' and trashed = false");
+  const f = await gd('drive/v3/files?q=' + q + '&fields=files(id,name)&spaces=drive');
+  if (f.files && f.files[0]) return f.files[0].id;
+  const c = await gd('drive/v3/files?fields=id', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ name, mimeType: 'application/vnd.google-apps.folder', parents: [parent] }) });
+  return c.id;
+}
+async function gPut(name, parent, text, mime) {
+  const q = encodeURIComponent("name = '" + name + "' and '" + parent + "' in parents and trashed = false");
+  const f = await gd('drive/v3/files?q=' + q + '&fields=files(id)');
+  const b = 'hs' + Date.now(), meta = f.files && f.files[0] ? {} : { name, parents: [parent] };
+  const body = '--' + b + '\r\ncontent-type: application/json; charset=UTF-8\r\n\r\n' + JSON.stringify(meta) + '\r\n--' + b + '\r\ncontent-type: ' + mime + '\r\n\r\n' + text + '\r\n--' + b + '--';
+  const url = f.files && f.files[0] ? 'upload/drive/v3/files/' + f.files[0].id + '?uploadType=multipart&fields=id' : 'upload/drive/v3/files?uploadType=multipart&fields=id';
+  return gd(url, { method: f.files && f.files[0] ? 'PATCH' : 'POST', headers: { 'content-type': 'multipart/related; boundary=' + b }, body });
+}
+$('#driveSave').onclick = async () => {
+  const stat = $('#driveStat'), btn = $('#driveSave');
+  if (!st.myBlog) { stat.innerHTML = '<span class="bad">먼저 1단계에서 내 블로그를 읽어 와 주세요.</span>'; return; }
+  btn.disabled = true;
+  const step = (p, m) => stat.innerHTML = '<div class="bar"><i style="width:' + p + '%"></i></div>' + m;
+  try {
+    step(5, '구글 드라이브 연결 중…');
+    driveTok = await getDriveToken();
+    step(20, '"후기씨앗" 폴더 찾는 중…');
+    const root = await gFolder('후기씨앗', 'root');
+    const sk = await gFolder('스킬', root), me = await gFolder('hugissiat-writer', sk), sc = await gFolder('scripts', me);
+    step(45, '스킬 파일 올리는 중…');
+    const [md, js] = await Promise.all([fetch('/skill/SKILL.md').then(r => r.text()), fetch('/skill/hs-naver.js').then(r => r.text())]);
+    await gPut('SKILL.md', me, md, 'text/markdown');
+    step(65, '에디터 도우미 올리는 중…');
+    await gPut('hs-naver.js', sc, js, 'text/javascript');
+    step(85, '내 스타일 올리는 중…');
+    await gPut('style.md', me, buildProfile(), 'text/markdown');
+    step(100, '<span class="ok">저장했어요.</span> 후기씨앗 / 스킬 / hugissiat-writer');
+    st.savedAt = new Date().toISOString(); save();
+    $('#inst').hidden = false;
+  } catch (e) { stat.innerHTML = '<span class="bad">' + esc(e.message) + '</span>'; }
+  btn.disabled = false;
+};
+$('#cmdCopy').onclick = async () => { try { await navigator.clipboard.writeText($('#cmd').textContent); toast('복사했어요'); } catch (e) { toast('복사하지 못했어요'); } };
+if (st.myBlog) { $('#myId').value = st.myBlog; if (st.blog !== st.myBlog) { st.blog = st.myBlog; if (!prof().ana) analyze(st.myBlog); else renderAll(); } }
+goStep(st.myBlog ? 'design' : 'blog');
 })();

@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>후기씨앗 - 내 블로그 결 그대로 글쓰기</title>
+<title>후기씨앗 - 내 스타일 등록</title>
 <meta name="description" content="내 네이버 블로그의 글 구성과 디자인 결을 분석해서, 후기씨앗 경험 기록으로 내가 쓴 것 같은 블로그 글을 만들어요.">
 <meta property="og:title" content="후기씨앗 - 내 블로그 결 그대로 글쓰기">
 <meta property="og:description" content="AI 글은 많아도, 내 경험은 나만 써요.">
@@ -30,47 +30,52 @@
 <main id="studio" class="studio v2">
   <aside class="panel">
     <nav class="steps" id="steps">
-      <button type="button" data-step="src" class="on"><b>1</b>서식</button>
-      <button type="button" data-step="tpl"><b>2</b>구성</button>
-      <button type="button" data-step="design"><b>3</b>디자인</button>
-      <button type="button" data-step="out"><b>4</b>저장</button>
+      <button type="button" data-step="blog" class="on"><b>1</b>내 블로그</button>
+      <button type="button" data-step="design"><b>2</b>스타일 확인</button>
+      <button type="button" data-step="save"><b>3</b>드라이브에 저장</button>
     </nav>
 
-    <section class="pane" data-pane="src">
-      <div class="ph">따라 할 글 서식</div>
-      <div class="srcTabs"><button type="button" data-m="kw" class="on">잘 뜨는 글</button><button type="button" data-m="blog">블로그 주소</button></div>
-      <form class="blog-in" id="kwForm"><input id="kw" placeholder="쓸 글 키워드 (예: 양주 막국수)" autocomplete="off"><button type="submit">분석</button></form>
-      <div class="chips" id="kwChips"></div>
-      <form class="blog-in" id="blogForm" hidden><input id="blogId" placeholder="따라 하고 싶은 블로그 주소" autocomplete="off"><button type="submit">불러오기</button></form>
-      <label class="chk" id="reviewWrap" hidden><input type="checkbox" id="reviewOnly" checked> 사진 많은 후기 글만</label>
-      <div class="blogs" id="blogs"></div>
+    <section class="pane" data-pane="blog">
+      <div class="ph">내 블로그 주소</div>
+      <p class="mut">최근 글에서 소제목·구분선·표·색·말투를 읽어 와요.</p>
+      <form class="blog-in" id="myForm"><input id="myId" placeholder="blog.naver.com/아이디" autocomplete="off"><button type="submit">읽어오기</button></form>
       <div id="anaBox" class="ana"></div>
-      <button type="button" class="next" data-go="tpl">다음: 글 구성</button>
-    </section>
-
-    <section class="pane" data-pane="tpl" hidden>
-      <div class="ph">글 구성</div>
-      <div id="tpls" class="tpls"></div>
-      <button type="button" class="next" data-go="design">다음: 디자인</button>
+      <button type="button" class="next" data-go="design">다음: 스타일 확인</button>
     </section>
 
     <section class="pane" data-pane="design" hidden>
-      <div class="ph">디자인 <span class="from" id="designFrom"></span></div>
+      <div class="ph">스타일 확인 <span class="from" id="designFrom"></span></div>
+      <p class="mut">미리보기를 보면서 다른 부분만 고쳐 주세요. 오른쪽 글을 눌러도 해당 설정으로 가요.</p>
       <div id="design"></div>
-      <button type="button" class="next" data-go="out">다음: 저장</button>
+      <div id="toneCard" hidden><div class="ph sm">말투</div><div id="tone"></div></div>
+      <button type="button" class="next" data-go="save">다음: 드라이브에 저장</button>
     </section>
 
-    <section class="pane" data-pane="out" hidden>
-      <div class="ph">내 글쓰기 설정</div>
-      <p class="mut">Aside가 이 설정과 후기씨앗 경험 기록으로 글을 써서 네이버에 임시저장해요.</p>
-      <button type="button" class="btn" id="dl">설정 파일 받기</button>
-      <button type="button" class="btn ghost" id="cp">복사하기</button>
-      <div id="toneCard" hidden><div class="ph sm">말투</div><div id="tone"></div></div>
+    <section class="pane" data-pane="save" hidden>
+      <div class="ph">구글 드라이브에 저장</div>
+      <p class="mut">후기씨앗 앱이 쓰는 같은 구글 드라이브의 <b>후기씨앗 / 스킬 / hugissiat-writer</b> 폴더에 글쓰기 스킬과 내 스타일을 넣어 둬요.</p>
+      <button type="button" class="btn" id="driveSave">구글 드라이브에 저장</button>
+      <div id="driveStat" class="dstat"></div>
+      <div class="inst" id="inst" hidden>
+        <div class="ph sm">Aside에 설치하기</div>
+        <p class="mut">Aside 채팅에 아래 문장을 붙여 넣으세요. 한 번만 하면 돼요.</p>
+        <div class="cmd" id="cmd">구글 드라이브 "후기씨앗/스킬/hugissiat-writer" 폴더를 내 Aside 스킬로 설치해줘</div>
+        <button type="button" class="btn ghost" id="cmdCopy">문장 복사</button>
+        <p class="mut" style="margin-top:14px">설치 후에는 "이 가이드로 체험단 글 써줘"와 함께 가이드만 붙여 넣으면 돼요.</p>
+      </div>
+      <p class="mut" style="margin-top:18px"><a href="#" id="dl">스타일 파일만 받기</a></p>
     </section>
+
+    <div hidden>
+      <div class="srcTabs"><button type="button" data-m="kw">kw</button><button type="button" data-m="blog">blog</button></div>
+      <form id="kwForm"><input id="kw"></form><div id="kwChips"></div>
+      <form id="blogForm"><input id="blogId"></form><label id="reviewWrap"><input type="checkbox" id="reviewOnly"></label>
+      <div id="blogs"></div><div id="tpls"></div><button id="cp"></button>
+    </div>
   </aside>
 
   <section class="preview">
-    <div class="pv-top"><div class="vseg"><button type="button" id="viewMobile" class="on">모바일</button><button type="button" id="viewPc">PC</button></div></div>
+    <div class="pv-top"><div class="chips" id="sampleChips"></div><div class="vseg"><button type="button" id="viewMobile" class="on">모바일</button><button type="button" id="viewPc">PC</button></div></div>
     <div class="paper mobile no-src" id="paper">
       <div class="doc-title" id="docTitle"></div>
       <div class="se-viewer se-theme-default" lang="ko-KR"><div class="se-main-container" id="doc"></div></div>
@@ -83,6 +88,7 @@
 <div class="toast" id="toast"></div>
 <footer><span>© 2026 PortPapa</span><a href="/privacy.html">개인정보처리방침</a><a href="mailto:hello@hugissiat.com">문의</a></footer>
 <script src="/s/templates.js"></script>
+<script src="https://accounts.google.com/gsi/client" async></script>
 <script src="/s/studio.js"></script>
 </body>
 </html>
