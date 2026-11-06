@@ -55,7 +55,7 @@ async function analyze(url, env) {
   if (!/^[a-zA-Z0-9_-]{3,40}$/.test(blog)) return json({ ok: false, error: '블로그 아이디를 확인해 주세요' }, 400);
   const n = Math.min(12, Math.max(3, parseInt(url.searchParams.get('n') || '8', 10)));
   const kind = url.searchParams.get('kind') === 'review' ? 'review' : 'all';
-  const key = `a2:${blog}:${n}:${kind}`;
+  const key = `a3:${blog}:${n}:${kind}`;
   if (!url.searchParams.get('fresh')) {
     const c = await env.TESTERS.get(key);
     if (c) return new Response(c, { headers: { 'content-type': 'application/json; charset=utf-8', 'x-cache': 'hit' } });
@@ -77,7 +77,7 @@ async function cached(env, key, ttl, fresh, make) {
 async function top(url, env) {
   const q = (url.searchParams.get('q') || '').trim().replace(/\s+/g, ' ').slice(0, 40);
   if (q.length < 2) return new Response(JSON.stringify({ ok: false, error: '키워드를 두 글자 이상 넣어 주세요' }), { status: 400, headers: J });
-  return cached(env, 't1:' + q, 86400, url.searchParams.get('fresh'), async () => { const r = await topPosts(q, 10); if (!r.posts.length) throw new Error('분석할 수 있는 글이 없어요'); return r; });
+  return cached(env, 't2:' + q, 86400, url.searchParams.get('fresh'), async () => { const r = await topPosts(q, 10); if (!r.posts.length) throw new Error('분석할 수 있는 글이 없어요'); return r; });
 }
 async function skin(url, env) {
   const blog = (url.searchParams.get('blog') || '').trim().replace(/^https?:\/\/(m\.)?blog\.naver\.com\//, '').split(/[/?#]/)[0];

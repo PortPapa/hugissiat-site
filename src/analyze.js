@@ -64,7 +64,21 @@ export function analyzeHtml(html) {
   for (const x of body.matchAll(/se-text-paragraph-align-([a-z]+)/g)) inc(st.align, x[1]);
   for (const x of body.matchAll(/line-height:\s*([\d.]+)/g)) inc(st.lineHeights, x[1]);
   for (const x of body.matchAll(/[;"]color:\s*(#[0-9a-fA-F]{6})/g)) inc(st.colors, x[1].toLowerCase());
-  for (const x of body.matchAll(/background-color:\s*(#[0-9a-fA-F]{6})/g)) { const c = x[1].toLowerCase(); if (c !== '#fbfbfb' && c !== '#00c73c') inc(st.highlights, c); }
+  const noTable = body.replace(/<table class="se-table-content"[\s\S]*?<\/table>/g, '');
+  for (const x of noTable.matchAll(/<span[^>]*background-color:\s*(#[0-9a-fA-F]{6})/g)) { const c = x[1].toLowerCase(); if (c !== '#fbfbfb' && c !== '#00c73c') inc(st.highlights, c); }
+  // 표: 머리 줄 색, 첫 칸 색, 테두리
+  st.tableHead = {}; st.tableCol = {}; st.tableNoBorder = 0; st.tableTextColor = {};
+  for (const t of body.matchAll(/<table class="se-table-content"([^>]*)>([\s\S]*?)<\/table>/g)) {
+    if (/border:\s*none/.test(t[1])) st.tableNoBorder++;
+    const rows = t[2].split(/<tr class="se-tr">/).slice(1);
+    const bg = cell => ((/<td[^>]*background-color:\s*(#[0-9a-fA-F]{6})/.exec(cell) || [])[1] || '').toLowerCase();
+    rows.forEach((r, i) => {
+      const cells = r.split(/<td /).slice(1);
+      if (!cells.length) return;
+      if (i === 0) { const c = bg(cells[0]); if (c) inc(st.tableHead, c); }
+      else { const c = bg(cells[0]); if (c) inc(st.tableCol, c); const tc = (/<span style="color:(#[0-9a-fA-F]{6})/.exec(cells[0]) || [])[1]; if (tc) inc(st.tableTextColor, tc.toLowerCase()); }
+    });
+  }
   st.boldCount = (body.match(/<b>|<strong/g) || []).length;
   // 본문 문단 (인용구 제외)
   const quoteBlocks = [...body.matchAll(/<blockquote class="se-quotation-container">([\s\S]*?)<\/blockquote>/g)].map(x => strip(x[1])).filter(Boolean);

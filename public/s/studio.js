@@ -33,15 +33,19 @@ function ph(label, w = 4, h = 3) {
 function span(text, d, o = {}) {
   const base = o.color || d.textColor || '#000000';
   const hl = x => d.hlMode === 'solid' ? `<span class="se-fs-${o.fs || d.size} se-ff-${d.font}" style="color:#ffffff;background-color:${d.solid || '#1a1915'};"><b>${x}</b></span>` : `<span class="se-fs-${o.fs || d.size} se-ff-${d.font}" style="color:${base};background-color:${d.highlight};">${x}</span>`;
-  let html = esc(text).replace(/==(.+?)==/g, (m, x) => (d.hlMode === 'solid' || d.highlight) ? `</span>${hl(x)}<span class="se-fs-${o.fs || d.size} se-ff-${d.font}" style="color:${base};">` : x);
+  const acc = x => `</span><span class="se-fs-${o.fs || d.size} se-ff-${d.font}" style="color:${d.subColor || '#222222'};"><b>${x}</b></span><span class="se-fs-${o.fs || d.size} se-ff-${d.font}" style="color:${base};">`;
+  let html = esc(text).replace(/\[\[(.+?)\]\]/g, (m, x) => o.plain ? x : acc(x)).replace(/==(.+?)==/g, (m, x) => (d.hlMode === 'solid' || d.highlight) ? `</span>${hl(x)}<span class="se-fs-${o.fs || d.size} se-ff-${d.font}" style="color:${base};">` : x);
   if (o.bold) html = `<b>${html}</b>`;
   return `<span class="se-fs-${o.fs || d.size} se-ff-${d.font}" style="color:${base};">${html}</span>`;
 }
 function para(text, d, o = {}) { return `<p class="se-text-paragraph se-text-paragraph-align-${o.align || d.align}" style="line-height:${d.lh};">${span(text, d, o)}</p>`; }
 const wrap = (cls, inner, src) => `<div class="se-component ${cls}">${src ? `<span class="src">${esc(src)}</span>` : ''}<div class="se-component-content">${inner}</div></div>`;
 
+const blank = d => `<p class="se-text-paragraph se-text-paragraph-align-${d.align}" style="line-height:${d.lh};"><span class="se-fs-${d.size}">&#8203;</span></p>`;
 function seText(lines, d, src) {
-  const ps = d.short ? lines.map(l => para(l, d)).join('') : para(lines.join(' '), d);
+  let ps;
+  if (d.short) { ps = ''; lines.forEach((l, i) => { if (i && i % 3 === 0) ps += blank(d); ps += para(l, d); }); }
+  else { const chunks = []; for (let i = 0; i < lines.length; i += 3) chunks.push(lines.slice(i, i + 3).join(' ')); ps = chunks.map(c => para(c, d)).join(blank(d)); }
   return wrap('se-text se-l-default', `<div class="se-section se-section-text se-l-default"><div class="se-module se-module-text">${ps}</div></div>`, src);
 }
 function seQuote(lines, layout, d, o = {}, src) {
@@ -61,10 +65,16 @@ function seStrip(labels, src) {
   return `<div class="se-component se-imageStrip se-imageStrip${n} se-l-default">${src ? `<span class="src">${esc(src)}</span>` : ''}<div class="se-component-content se-component-content-extend"><div class="se-section se-section-imageStrip se-l-default"><div class="se-imageStrip-container se-imageStrip-col-${n}">${mods}</div></div></div></div>`;
 }
 function sePlace(b, src) { return wrap('se-placesMap se-l-map_text', `<div class="se-section se-section-placesMap se-section-align-center se-l-map_text"><div class="se-module se-module-map-text"><a class="se-map-info"><div class="se-map-marker"></div><strong class="se-map-title">${esc(b.name)}</strong><p class="se-map-address">${esc(b.addr)}</p></a></div></div>`, src); }
-function seTable(rows, d, src) {
-  const head = rows[0][0] === '메뉴';
-  const tr = rows.map((r, i) => `<tr class="se-tr">${r.map((c, j) => { const fill = (head && i === 0) || (!head && j === 0) ? (d.tableFill || '') : ''; const fg = fill && isDark(fill) ? '#ffffff' : ''; return `<td class="se-cell" style="width:${(100 / r.length).toFixed(1)}%;height:40px;${fill ? 'background-color:' + fill + ';' : ''}"><div class="se-module se-module-text"><p class="se-text-paragraph se-text-paragraph-align-center">${span(c, d, { bold: !!fill || (i === 0 && head), color: fg || undefined })}</p></div></td>`; }).join('')}</tr>`).join('');
-  return wrap('se-table se-l-default', `<div class="se-section se-section-table se-l-default se-section-align-center" style="width:100%;"><div class="se-table-container"><table class="se-table-content"><tbody>${tr}</tbody></table></div></div>`, src);
+function seTable(rows, d, src, o = {}) {
+  const head = o.head != null ? o.head : rows.length > 2 && rows[0].every(c => c.length <= 8) && rows[0][0] !== '위치';
+  const H = d.tableHead || '#333333', C = d.tableCol || '#f4f4f4';
+  const tr = rows.map((r, i) => `<tr class="se-tr">${r.map((c, j) => {
+    const isH = head && i === 0, isC = !isH && j === 0;
+    const bg = isH ? H : isC ? C : '';
+    const fg = isH ? (isDark(H) ? '#ffffff' : '#222222') : isC ? (isDark(C) ? '#ffffff' : (d.textColor || '#444444')) : (d.textColor || '#444444');
+    return `<td class="se-cell" style="width:${j === 0 && r.length === 2 ? '32' : (100 / r.length).toFixed(1)}%;height:40px;border:none;padding:9px 12px;${bg ? 'background-color:' + bg + ';' : ''}"><div class="se-module se-module-text"><p class="se-text-paragraph se-text-paragraph-align-left" style="line-height:1.6;">${span(c, { ...d, size: 'fs15' }, { bold: isH || isC, color: fg, plain: true })}</p></div></td>`;
+  }).join('')}</tr>`).join('');
+  return wrap('se-table se-l-default', `<div class="se-section se-section-table se-l-default se-section-align-center" style="width:100%;"><div class="se-table-container"><table class="se-table-content" style="border:none;"><tbody>${tr}</tbody></table></div></div>`, src);
 }
 const isDark = c => { const m = /^#?([0-9a-f]{6})$/i.exec(c || ''); if (!m) return false; const n = parseInt(m[1], 16); return ((n >> 16) * 299 + ((n >> 8) & 255) * 587 + (n & 255) * 114) / 1000 < 140; };
 function seBox(lines, d, src) {
@@ -89,7 +99,6 @@ function renderDoc() {
     }
     else if (b.t === 'text') {
       let lines = b.lines.slice();
-      if (!firstText && d.highlight && hl < 2 && lines.length > 1) { const L = lines[lines.length - 1]; const m = L.match(/^(.*?)([^\s]+\s[^\s]+(요|다)\.?)$/); if (m) { lines[lines.length - 1] = m[1] + '==' + m[2] + '=='; hl++; } }
       firstText = false;
       out.push(seText(lines, d, b.src));
     }
@@ -97,13 +106,12 @@ function renderDoc() {
     else if (b.t === 'quote') out.push(seQuote(b.text, d.quote, d, {}, b.src));
     else if (b.t === 'line') { if (d.line !== 'none') out.push(seLine(d)); }
     else if (b.t === 'place') out.push(sePlace(b, b.src));
-    else if (b.t === 'info') out.push(d.boxFill ? seBox(['📍 매장 이용 정보', ...b.lines], d, b.src) : seQuote(['📍 매장 이용 정보', ...b.lines.slice(0)], d.infoQuote, d, { boldFirst: true }, b.src));
+    else if (b.t === 'info') out.push(seTable(b.lines.map(l => { const m = l.replace(/^[^가-힣A-Za-z0-9]+\s*/, '').split(/:\s*/); return [m[0], m.slice(1).join(': ')]; }), d, b.src, { head: false }));
     else if (b.t === 'table') out.push(seTable(b.rows, d, b.src));
     else if (b.t === 'sticker') { if (d.sticker) out.push(seSticker()); }
     else if (b.t === 'link') out.push(seLink(b, b.src));
     else if (b.t === 'notice') { if (d.notice === 'bottom') out.push(seText([d.noticeText], { ...d, size: 'fs13' }, '대가 표기')); }
   }
-  if (d.sign) out.push(seQuote(d.sign, 'quotation_line', d));
   if (d.sticker && tpl.id !== 'product') out.splice(Math.min(out.length, out.length - 1), 0, seSticker());
   $('#doc').innerHTML = out.join('');
   $('#docTitle').innerHTML = `<span style="font-family:${fontCss(d.font)}">${esc(TITLES[tpl.id] || tpl.name)}</span>`;
@@ -213,13 +221,12 @@ function designRows() {
       ['mycolor', '내 블로그 색', st.palette ? (st.palette.name || st.palette.blog) : '맞추기', () => '<div class="mycolor" id="myColor"></div>'],
       ['subColor', '포인트 글자색', dot(d.subColor) + (d.subColor || '#000000'), () => swRaw('subColor', O.textColors)],
       ['hl', '강조', dot(d.hlMode === 'solid' ? d.solid : d.highlight) + (d.hlMode === 'solid' ? '진한 배경' : (d.highlight ? '형광펜' : '안 씀')), () => segRaw('hlMode', [['mark', '형광펜'], ['solid', '진한 배경']]) + '<div style="height:10px"></div>' + (d.hlMode === 'solid' ? swRaw('solid', O.solids) : swRaw('highlight', O.highlights))],
-      ['box', '박스·표 채우기', dot(d.boxFill) + (d.boxFill ? '채움' : '인용구'), () => '<div class="mut" style="margin:0 0 6px">이용 정보 박스</div>' + swRaw('boxFill', ['', ...O.boxes]) + '<div class="mut" style="margin:12px 0 6px">표 머리</div>' + swRaw('tableFill', ['', ...O.boxes, ...O.solids])],
+      ['table', '표 색', dot(d.tableHead) + dot(d.tableCol) + '머리 · 첫 칸', () => '<div class="mut" style="margin:0 0 6px">머리 줄</div>' + swRaw('tableHead', [...O.solids, ...O.boxes]) + '<div class="mut" style="margin:12px 0 6px">첫 칸</div>' + swRaw('tableCol', [...O.boxes, '#ffffff'])],
       ['textColor', '본문 글자색', dot(d.textColor) + (d.textColor || '#000000'), () => swRaw('textColor', O.textColors)],
     ]],
     ['대가 표기', [
       ['notice', '위치', { top: '맨 위', bottom: '맨 아래', none: '안 넣음' }[d.notice], () => segRaw('notice', [['top', '맨 위'], ['bottom', '맨 아래'], ['none', '안 넣음']])],
       ['noticeText', '문구', d.notice === 'none' ? '-' : '수정', () => `<textarea data-text="noticeText">${esc(d.noticeText)}</textarea>`],
-      ['sign', '마지막 서명', d.sign ? '있음' : '없음', () => `<textarea data-text="sign" placeholder="예: 글/사진 ⓒ 지아야가자">${esc(d.sign)}</textarea>`],
     ]],
   ];
 }
@@ -254,13 +261,13 @@ document.querySelectorAll('[data-go]').forEach(b => b.onclick = () => goStep(b.d
 $('#doc').addEventListener('click', e => {
   const c = e.target.closest('.se-component'); if (!c) return;
   const cl = c.className;
-  const k = /se-quotation/.test(cl) ? (/sub/.test(c.dataset.k || '') ? 'sub' : 'sub') : /horizontalLine/.test(cl) ? 'line' : /imageStrip|se-image/.test(cl) ? 'photo' : /se-table/.test(cl) ? 'box' : /sticker/.test(cl) ? 'sticker' : /se-text/.test(cl) ? 'font' : '';
+  const k = /se-quotation/.test(cl) ? (/sub/.test(c.dataset.k || '') ? 'sub' : 'sub') : /horizontalLine/.test(cl) ? 'line' : /imageStrip|se-image/.test(cl) ? 'photo' : /se-table/.test(cl) ? 'table' : /sticker/.test(cl) ? 'sticker' : /se-text/.test(cl) ? 'font' : '';
   if (!k) return; openRow = k; goStep('design'); renderDesign();
   const row = document.querySelector('[data-row="' + k + '"]'); if (row) row.scrollIntoView({ block: 'center', behavior: 'smooth' });
 });
 
 /* ---------- 내 블로그 색 ---------- */
-const MILD = { textColor: '#000000', subColor: '#000000', hlMode: 'mark', highlight: '#fff3b0', solid: '#333333', boxFill: '#f5f5f5', tableFill: '#f1f1f1' };
+const MILD = { textColor: '#444444', subColor: '#222222', hlMode: 'mark', highlight: '#fff3b0', solid: '#333333', tableHead: '#333333', tableCol: '#f4f4f4' };
 const rgb = h => { const n = parseInt(h.slice(1), 16); return [n >> 16, (n >> 8) & 255, n & 255]; };
 const hx = a => '#' + a.map(v => Math.max(0, Math.min(255, Math.round(v))).toString(16).padStart(2, '0')).join('');
 const mix = (h, w, t) => { const a = rgb(h), b = rgb(w); return hx(a.map((v, i) => v + (b[i] - v) * t)); };
@@ -286,30 +293,46 @@ function pickPalette(sk, cols) {
   if (!accent) return { ...MILD, _src: 'mild' };
   const pageBg = [sk.postBg, sk.bg].find(c => c && c !== '#ffffff' && hsl(c).l > .9);
   const t = sk.title && hsl(sk.title).l < .2 ? sk.title : '#000000';
-  return { textColor: t, subColor: darkFor(accent, 3.2), hlMode: 'mark', highlight: mix(accent, '#ffffff', .75), solid: darkFor(accent, 4.5), boxFill: pageBg || mix(accent, '#ffffff', .9), tableFill: mix(accent, '#ffffff', .82), _src: 'skin', _accent: accent };
+  return { textColor: t, subColor: darkFor(accent, 3.2), hlMode: 'mark', highlight: mix(accent, '#ffffff', .75), solid: darkFor(accent, 4.5), tableHead: darkFor(accent, 4.5), tableCol: pageBg || mix(accent, '#ffffff', .9), _src: 'skin', _accent: accent };
 }
-function paletteDesign() { const p = st.palette && st.palette.colors || MILD; const o = {}; Object.keys(MILD).forEach(k => o[k] = p[k]); return o; }
-async function loadMyColor(id) {
+const GREENS = ['#00c73c', '#2cae0c', '#03c75a', '#2db400', '#ffffff'];
+function postPalette(posts) {
+  const cnt = f => { const o = {}; posts.forEach(p => Object.entries(p[f] || {}).forEach(([k, v]) => o[k] = (o[k] || 0) + v)); return Object.entries(o).sort((a, b) => b[1] - a[1]).map(x => x[0]).filter(c => !GREENS.includes(c)); };
+  const cols = cnt('colors'), hls = cnt('highlights'), th = cnt('tableHead'), tc = cnt('tableCol');
+  const o = {};
+  const neutral = cols.find(c => hsl(c).s < .25 && hsl(c).l < .65); if (neutral) o.textColor = neutral;
+  const acc = cols.find(c => hsl(c).s >= .3 && hsl(c).l > .2 && hsl(c).l < .75); if (acc) o.subColor = acc;
+  const light = hls.find(c => hsl(c).l > .8); if (light) { o.hlMode = 'mark'; o.highlight = light; }
+  const dark = hls.find(c => hsl(c).l < .3); if (dark) o.solid = dark;
+  if (th[0]) o.tableHead = th[0]; else if (dark) o.tableHead = dark;
+  if (tc[0]) o.tableCol = tc[0]; else { const l2 = hls.filter(c => hsl(c).l > .8)[1]; if (l2) o.tableCol = l2; }
+  return o;
+}
+function paletteDesign() { const p = st.palette && st.palette.colors || MILD; const o = {}; Object.keys(MILD).forEach(k => o[k] = p[k] || MILD[k]); return o; }
+async function loadMyColor(id, guess) {
   if ($('#myColor')) $('#myColor').innerHTML = '<div class="load"><i></i>내 블로그 스킨을 보는 중…</div>';
   try {
-    const j = await (await fetch('/api/skin?blog=' + encodeURIComponent(id))).json();
-    if (!j.ok) throw new Error(j.error || '불러오지 못했어요');
-    const cols = [...await imgColors(j.headImg), ...await imgColors(j.bgImg)];
-    st.myBlog = id; st.palette = { blog: id, name: j.name, headImg: j.headImg, colors: pickPalette(j, cols) };
+    const [a, j] = await Promise.all([fetch('/api/analyze?blog=' + encodeURIComponent(id) + '&n=12&kind=all').then(r => r.json()), fetch('/api/skin?blog=' + encodeURIComponent(id)).then(r => r.json())]);
+    if (!a.ok || !a.posts || !a.posts.length) throw new Error('블로그를 찾지 못했어요. 내 블로그 주소를 넣어 주세요.');
+    const cols = j.ok ? [...await imgColors(j.headImg), ...await imgColors(j.bgImg)] : [];
+    const base = j.ok ? pickPalette(j, cols) : { ...MILD, _src: 'mild' };
+    const fromPosts = postPalette(a.posts);
+    const colors = { ...base, ...fromPosts, _src: Object.keys(fromPosts).length ? 'posts' : base._src };
+    st.myBlog = id; st.palette = { v: 2, blog: id, name: a.name || (j.ok && j.name) || id, headImg: j.ok ? j.headImg : '', colors };
     Object.values(st.profiles).forEach(p => { if (p.design) Object.assign(p.design, paletteDesign()); });
-    save(); changed(); toast(st.palette.colors._src === 'skin' ? '내 블로그 색을 맞췄어요' : '눈에 띄는 색이 없어 무난한 색으로 했어요');
-  } catch (e) { if ($('#myColor')) $('#myColor').innerHTML = '<div class="err">' + esc(e.message) + '</div>'; setTimeout(renderMyColor, 2500); }
+    save(); changed(); toast(st.palette.colors._src === 'mild' ? '눈에 띄는 색이 없어 무난한 색으로 했어요' : '내 블로그 색을 맞췄어요');
+  } catch (e) { if (guess) { renderMyColor(); return; } if ($('#myColor')) $('#myColor').innerHTML = '<div class="err">' + esc(e.message) + '</div>'; setTimeout(renderMyColor, 2500); }
 }
 function renderMyColor() {
   const el = $('#myColor'); if (!el) return;
   const p = st.palette;
   if (!p) {
-    el.innerHTML = '<div class="lb">색은 내 블로그에 맞추기</div><form class="r" id="mcForm"><input id="mcId" placeholder="내 블로그 아이디" value="' + esc((ME && ME.blogGuess) || '') + '"><button>맞추기</button></form>';
+    el.innerHTML = '<div class="lb">색은 내 블로그에 맞추기</div><form class="r" id="mcForm"><input id="mcId" placeholder="내 블로그 주소 (blog.naver.com/...)" value=""><button>맞추기</button></form>';
     $('#mcForm').onsubmit = e => { e.preventDefault(); const v = $('#mcId').value.trim().replace(/^https?:\/\/(m\.)?blog\.naver\.com\//, '').split(/[/?#]/)[0]; if (v) loadMyColor(v); };
     return;
   }
   const c = p.colors;
-  el.innerHTML = '<div class="lb">' + esc(p.name || p.blog) + ' 색 <a href="#" id="mcRe">바꾸기</a></div>' + (p.headImg ? '<div class="hd" style="background-image:url(/api/img?u=' + encodeURIComponent(p.headImg) + ')"></div>' : '') + '<div class="dots">' + [c.subColor, c.highlight, c.boxFill, c.tableFill].map(x => '<i style="background:' + x + '"></i>').join('') + '<span>' + (c._src === 'skin' ? '스킨에서 뽑은 색' : '무난한 기본색') + '</span></div>';
+  el.innerHTML = '<div class="lb">' + esc(p.name || p.blog) + ' 색 <a href="#" id="mcRe">바꾸기</a></div>' + (p.headImg ? '<div class="hd" style="background-image:url(/api/img?u=' + encodeURIComponent(p.headImg) + ')"></div>' : '') + '<div class="dots">' + [c.textColor, c.subColor, c.highlight, c.tableHead, c.tableCol].map(x => '<i style="background:' + x + '"></i>').join('') + '<span>' + (c._src === 'posts' ? '내 글에서 뽑은 색' : c._src === 'skin' ? '스킨에서 뽑은 색' : '무난한 기본색') + '</span></div>';
   $('#mcRe').onclick = e => { e.preventDefault(); st.palette = null; save(); renderMyColor(); };
 }
 
@@ -365,8 +388,6 @@ function designFrom(posts) {
   d.sticker = posts.reduce((a, p) => a + (p.stickers || 0), 0) / posts.length >= 0.8;
   const sp = posts.map(p => p.sponsor).filter(Boolean);
   if (sp.find(s => s.text)) d.noticeText = sp.find(s => s.text).text;
-  const signs = posts.flatMap(p => (p.quotes || []).slice(-1)).filter(t => /ⓒ|©/.test(t));
-  d.sign = signs[0] || '';
   return d;
 }
 function renderAna() {
@@ -456,7 +477,7 @@ ${order.join('\n')}
 - 이용 정보 박스: ${d.boxFill ? `표 한 칸에 배경 ${d.boxFill}` : '인용구'}${d.tableFill ? ` / 표 머리 칸 배경 ${d.tableFill}` : ''}
 - 스티커: ${d.sticker ? '처음과 끝에 하나씩' : '안 씀'}
 - 대가 표기: ${d.notice === 'none' ? '넣지 않음' : `${d.notice === 'top' ? '맨 위' : '맨 아래'} · "${d.noticeText}"`}
-${d.sign ? `- 마지막 서명: ${d.sign}\n` : ''}
+
 ## 말투
 - 자주 쓰는 끝맺음: ${en.join(', ') || '(분석 전)'}
 - 참고 글 (Aside가 읽고 말투를 맞춰요):
@@ -508,7 +529,8 @@ fetch('/api/me').then(r => r.ok ? r.json() : null).then(j => {
   document.addEventListener('click', e => { if (!$('#acct').contains(e.target)) $('#acct').hidden = true; });
   $('#acctDel').onclick = async () => { if (!confirm('계정과 저장된 설정을 모두 지울까요? 되돌릴 수 없어요.')) return; await fetch('/api/me/delete', { method: 'POST' }); localStorage.removeItem(LS); localStorage.removeItem(LS + '-synced'); location.href = '/'; };
   fetch('/api/state').then(r => r.json()).then(x => { if (x.ok && x.state && x.state.profiles && !localStorage.getItem(LS + '-synced')) { st = { ...st, ...x.state }; localStorage.setItem(LS + '-synced', '1'); save(); setMode(st.mode || 'kw'); renderAll(); } });
-  if (!st.palette && j.blogGuess) loadMyColor(j.blogGuess); else renderMyColor();
+  if (st.palette && st.palette.v !== 2) st.palette = null;
+  if (!st.palette && st.myBlog) loadMyColor(st.myBlog); else if (!st.palette && j.blogGuess) loadMyColor(j.blogGuess, true); else renderMyColor();
 }).catch(() => {});
 if (!st.blog) analyze('kw:맛집 후기');
 })();
