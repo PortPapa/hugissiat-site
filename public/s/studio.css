@@ -105,3 +105,11 @@ footer{display:flex;gap:16px;justify-content:center;padding:26px;color:var(--sub
 [hidden]{display:none!important}
 .sw{flex-wrap:wrap}
 .studio{padding-top:22px}
+
+.top nav .me{border:0;background:transparent;font:inherit;font-weight:700;cursor:pointer;padding:6px 8px;border-radius:999px}.top nav .me:hover{background:rgba(0,0,0,.05)}
+.noimg{display:inline-block;width:24px;height:24px;border-radius:50%;background:var(--blush)}
+.acct{position:fixed;top:58px;right:16px;z-index:60;width:280px;background:#fff;border:1px solid var(--line);border-radius:16px;box-shadow:0 16px 40px rgba(0,0,0,.12);padding:16px}
+.acct .ah{display:flex;gap:12px;align-items:center;margin-bottom:12px}.acct .ah img,.acct .ah .noimg{width:48px;height:48px;border-radius:50%}.acct .ah b{display:block;font-size:16px}.acct .ah span{font-size:13px;color:var(--sub);word-break:break-all}
+.acct dl{display:grid;grid-template-columns:auto 1fr;gap:6px 12px;font-size:13px;margin:0 0 14px;padding:10px 12px;background:#faf8f3;border-radius:10px}.acct dt{color:var(--sub)}.acct dd{margin:0}
+.acct .ab{display:block;width:100%;text-align:center;height:40px;line-height:40px;border-radius:10px;border:1px solid var(--line);background:#fff;font:inherit;font-weight:700;color:var(--ink,#2f3a2e);text-decoration:none;cursor:pointer;margin-top:6px}.acct .ab.del{color:#c0392b;border-color:#f1d4cf}
+.acct .ab{display:flex;align-items:center;justify-content:center;line-height:1;box-sizing:border-box}

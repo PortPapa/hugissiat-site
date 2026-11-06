@@ -447,7 +447,15 @@ setMode(st.mode || 'kw');
 renderAll();
 fetch('/api/me').then(r => r.ok ? r.json() : null).then(j => {
   if (!j) return; ME = j;
-  $('#me').innerHTML = (j.img ? '<img src="' + esc(j.img) + '" alt="">' : '') + esc(j.nickname || '로그아웃'); $('#me').title = '로그아웃';
+  $('#me').hidden = false;
+  $('#me').innerHTML = (j.img ? '<img src="' + esc(j.img) + '" alt="">' : '<i class="noimg"></i>') + esc(j.nickname || '내 계정');
+  const VIA = { naver: '네이버', google: '구글' };
+  $('#acct').innerHTML = '<div class="ah">' + (j.img ? '<img src="' + esc(j.img) + '" alt="">' : '<i class="noimg"></i>') + '<div><b>' + esc(j.nickname || '이름 없음') + '</b><span>' + esc(j.email || '이메일 없음') + '</span></div></div>' +
+    '<dl><dt>로그인</dt><dd>' + (j.via || []).map(v => VIA[v] || v).join(', ') + '</dd><dt>설정 저장</dt><dd>이 계정에 자동 저장돼요</dd></dl>' +
+    '<a class="ab" href="/auth/logout">로그아웃</a><button type="button" class="ab del" id="acctDel">계정 지우기</button>';
+  $('#me').onclick = e => { e.stopPropagation(); $('#acct').hidden = !$('#acct').hidden; };
+  document.addEventListener('click', e => { if (!$('#acct').contains(e.target)) $('#acct').hidden = true; });
+  $('#acctDel').onclick = async () => { if (!confirm('계정과 저장된 설정을 모두 지울까요? 되돌릴 수 없어요.')) return; await fetch('/api/me/delete', { method: 'POST' }); localStorage.removeItem(LS); localStorage.removeItem(LS + '-synced'); location.href = '/'; };
   fetch('/api/state').then(r => r.json()).then(x => { if (x.ok && x.state && x.state.profiles && !localStorage.getItem(LS + '-synced')) { st = { ...st, ...x.state }; localStorage.setItem(LS + '-synced', '1'); save(); setMode(st.mode || 'kw'); renderAll(); } });
   if (!st.palette && j.blogGuess) loadMyColor(j.blogGuess); else renderMyColor();
 }).catch(() => {});
