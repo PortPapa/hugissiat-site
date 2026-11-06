@@ -1,7 +1,8 @@
 // 네이버 블로그 디자인 결 분석: 공개 글 HTML(스마트에디터 se-* 마크업)에서 통계만 뽑는다. AI 없음.
 const UA = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130 Safari/537.36';
 
-const decode = s => s.replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '"').replace(/&#39;/g, "'").replace(/&#38;/g, '&').replace(/&nbsp;/g, ' ').replace(/&amp;/g, '&');
+const ENT = { amp: '&', lt: '<', gt: '>', quot: '"', apos: "'", nbsp: ' ', middot: '·', hellip: '…', lsquo: '‘', rsquo: '’', ldquo: '“', rdquo: '”', ndash: '–', mdash: '—', bull: '•', times: '×', rarr: '→', larr: '←', uarr: '↑', darr: '↓', copy: '©', reg: '®', trade: '™', deg: '°', plusmn: '±', sim: '∼', tilde: '˜', laquo: '«', raquo: '»', lsaquo: '‹', rsaquo: '›', prime: '′', Prime: '″', hearts: '♥', star: '☆' };
+const decode = s => { let t = s; for (let i = 0; i < 2; i++) t = t.replace(/&(#x[0-9a-fA-F]+|#\d+|[a-zA-Z]+);/g, (m, e) => e[0] === '#' ? String.fromCodePoint(e[1] === 'x' || e[1] === 'X' ? parseInt(e.slice(2), 16) : parseInt(e.slice(1), 10)) : (ENT[e] != null ? ENT[e] : m)); return t; };
 const strip = s => decode(s.replace(/<!--[\s\S]*?-->/g, '').replace(/<[^>]+>/g, '')).replace(/\u200b/g, '').trim();
 const inc = (o, k, n = 1) => { if (k) o[k] = (o[k] || 0) + n; };
 
@@ -121,4 +122,52 @@ export async function analyzeBlog(blogId, n = 8, kind = 'all') {
     if (m) nick = decode(m[1]).replace(/\s*:\s*네이버 블로그\s*$/, '').trim();
   } catch (e) {}
   return { blogId, name: nick, kind, at: new Date().toISOString(), posts };
+}
+
+async function fetchPost(blogId, logNo) {
+  const u = `https://blog.naver.com/PostView.naver?blogId=${encodeURIComponent(blogId)}&logNo=${logNo}&redirect=Dlog&widgetTypeCall=true&directAccess=false`;
+  const r = await fetch(u, { headers: { 'User-Agent': UA, Referer: `https://blog.naver.com/${blogId}` } });
+  const html = await r.text();
+  const st = analyzeHtml(html);
+  const nick = (html.match(/var\s+nickName\s*=\s*['"]([^'"]*)['"]/) || [])[1] || '';
+  return { ...st, blogId, nick: decode(nick), logNo, url: `https://blog.naver.com/${blogId}/${logNo}` };
+}
+
+// 네이버 블로그 검색 상위 글
+export async function topPosts(q, n = 10) {
+  const r = await fetch('https://search.naver.com/search.naver?ssc=tab.blog.all&sm=tab_jum&query=' + encodeURIComponent(q), { headers: { 'User-Agent': UA, 'Accept-Language': 'ko-KR,ko;q=0.9', Referer: 'https://www.naver.com/' } });
+  if (!r.ok) throw new Error('검색 결과를 불러오지 못했어요');
+  const h = await r.text();
+  const seen = new Set(), list = [];
+  for (const m of h.matchAll(/blog\.naver\.com\/([A-Za-z0-9_\-]{3,40})\/(\d{9,})/g)) {
+    const k = m[1] + '/' + m[2];
+    if (seen.has(k)) continue; seen.add(k);
+    list.push({ blogId: m[1], logNo: m[2], rank: list.length + 1 });
+    if (list.length >= n) break;
+  }
+  if (!list.length) throw new Error('검색 결과에서 블로그 글을 찾지 못했어요');
+  const posts = (await Promise.all(list.map(async p => { try { return { ...(await fetchPost(p.blogId, p.logNo)), rank: p.rank }; } catch (e) { return null; } }))).filter(p => p && p.textChars > 200);
+  return { kind: 'kw', q, name: `“${q}” 상위 글`, at: new Date().toISOString(), posts };
+}
+
+// 블로그 스킨: 배경색·배경 이미지·타이틀 이미지·메뉴 강조색·글 제목색
+export async function blogSkin(blogId) {
+  const r = await fetch(`https://blog.naver.com/PostList.naver?blogId=${encodeURIComponent(blogId)}&widgetTypeCall=true&directAccess=true`, { headers: { 'User-Agent': UA, Referer: 'https://blog.naver.com/' + blogId } });
+  const h = await r.text();
+  const hex = s => { const m = /rgb\(\s*(\d+),\s*(\d+),\s*(\d+)\)/.exec(s || ''); if (m) return '#' + [m[1], m[2], m[3]].map(x => (+x).toString(16).padStart(2, '0')).join(''); const k = /#([0-9a-fA-F]{6})/.exec(s || ''); return k ? '#' + k[1].toLowerCase() : ''; };
+  const rule = sel => { const i = h.indexOf(sel + ' {'); if (i < 0) return ''; return h.slice(i, h.indexOf('}', i)); };
+  const img = s => (/url\((https:\/\/blogfiles\.pstatic\.net[^)]+)\)/.exec(s || '') || [])[1] || '';
+  const body = rule('body');
+  const head = rule('#head-skin');
+  const titleM = h.match(/<title>([^<]+)<\/title>/);
+  return {
+    blogId,
+    name: titleM ? decode(titleM[1]).replace(/\s*:\s*네이버 블로그\s*$/, '').trim() : blogId,
+    bg: hex((/background-color:([^;]+)/.exec(body) || [])[1]),
+    bgImg: img(body),
+    headImg: img(head),
+    menuOn: hex((/color:([^;]+)/.exec(rule('#blog-menu .on')) || [])[1]),
+    title: hex((/color:([^;]+)/.exec(rule('.pcol1')) || [])[1]),
+    postBg: hex((/background:([^;]+)/.exec(rule('.post-back')) || [])[1]),
+  };
 }

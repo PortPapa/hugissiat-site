@@ -131,7 +131,10 @@ window.HS_OPTIONS = {
   sizes: [['fs13', '13'], ['fs15', '15'], ['fs16', '16'], ['fs19', '19']],
   quotes: [['default', '따옴표'], ['quotation_line', '버티컬 라인'], ['quotation_bubble', '말풍선'], ['quotation_underline', '라인&따옴표'], ['quotation_postit', '포스트잇'], ['quotation_corner', '프레임']],
   lines: [['default', '기본'], ['line1', '라인1'], ['line2', '라인2'], ['line3', '라인3'], ['line4', '라인4'], ['line5', '라인5'], ['line6', '라인6'], ['line7', '라인7']],
-  highlights: ['', '#f4dfd5', '#ffd6e7', '#fff3b0', '#dff2d8', '#dbe9ff', '#ebe3ff']
+  highlights: ['', '#f4dfd5', '#ffd6e7', '#fff3b0', '#dff2d8', '#dbe9ff', '#ebe3ff'],
+  textColors: ['#000000', '#555555', '#888888', '#806551', '#d97757', '#e8483f', '#f08c00', '#2db400', '#6F8E6D', '#1e88e5', '#3949ab', '#8e44ad', '#c2185b'],
+  solids: ['#1a1915', '#806551', '#6F8E6D', '#d97757', '#e8483f', '#1e88e5', '#3949ab', '#c2185b'],
+  boxes: ['#f5f2ea', '#fbe9e2', '#fdf0f4', '#fff8dc', '#eef6ec', '#eaf2fd', '#f3eefc', '#f1f1f1']
 };
 
 window.HS_DEFAULT_DESIGN = {
@@ -139,6 +142,7 @@ window.HS_DEFAULT_DESIGN = {
   sub: 'quote', subQuote: 'quotation_underline', subSize: 'fs24', subColor: '#000000',
   quote: 'default', infoQuote: 'quotation_line', line: 'line5',
   photo: 'strip', short: true, highlight: '#f4dfd5', sticker: true,
-  notice: 'bottom', noticeText: '이 글은 업체로부터 서비스를 제공받아 직접 경험하고 솔직하게 작성했어요.',
+  textColor: '#000000', hlMode: 'mark', solid: '#1a1915', boxFill: '', tableFill: '',
+  notice: 'top', noticeText: '이 글은 업체로부터 서비스를 제공받아 직접 경험하고 솔직하게 작성했어요.',
   sign: ''
 };

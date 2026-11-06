@@ -1,6 +1,7 @@
 // hugissiat.com: 정적 페이지 + 테스터 신청 API
 import { EmailMessage } from 'cloudflare:email';
-import { analyzeBlog } from './analyze.js';
+import { analyzeBlog, topPosts, blogSkin } from './analyze.js';
+import { handleAuth, handleMe, sessionUser } from './auth.js';
 
 const GROUP_URL = 'https://groups.google.com/g/hugissiat-testers';
 const OPTIN_URL = 'https://play.google.com/apps/testing/com.portpapa.hugissiat';
@@ -54,7 +55,7 @@ async function analyze(url, env) {
   if (!/^[a-zA-Z0-9_-]{3,40}$/.test(blog)) return json({ ok: false, error: '블로그 아이디를 확인해 주세요' }, 400);
   const n = Math.min(12, Math.max(3, parseInt(url.searchParams.get('n') || '8', 10)));
   const kind = url.searchParams.get('kind') === 'review' ? 'review' : 'all';
-  const key = `a:${blog}:${n}:${kind}`;
+  const key = `a2:${blog}:${n}:${kind}`;
   if (!url.searchParams.get('fresh')) {
     const c = await env.TESTERS.get(key);
     if (c) return new Response(c, { headers: { 'content-type': 'application/json; charset=utf-8', 'x-cache': 'hit' } });
@@ -67,17 +68,52 @@ async function analyze(url, env) {
   } catch (e) { return json({ ok: false, error: (e && e.message) || '불러오지 못했어요' }, 502); }
 }
 
+const J = { 'content-type': 'application/json; charset=utf-8' };
+async function cached(env, key, ttl, fresh, make) {
+  if (!fresh) { const c = await env.TESTERS.get(key); if (c) return new Response(c, { headers: { ...J, 'x-cache': 'hit' } }); }
+  try { const body = JSON.stringify({ ok: true, ...(await make()) }); await env.TESTERS.put(key, body, { expirationTtl: ttl }); return new Response(body, { headers: J }); }
+  catch (e) { return new Response(JSON.stringify({ ok: false, error: (e && e.message) || '불러오지 못했어요' }), { status: 502, headers: J }); }
+}
+async function top(url, env) {
+  const q = (url.searchParams.get('q') || '').trim().replace(/\s+/g, ' ').slice(0, 40);
+  if (q.length < 2) return new Response(JSON.stringify({ ok: false, error: '키워드를 두 글자 이상 넣어 주세요' }), { status: 400, headers: J });
+  return cached(env, 't1:' + q, 86400, url.searchParams.get('fresh'), async () => { const r = await topPosts(q, 10); if (!r.posts.length) throw new Error('분석할 수 있는 글이 없어요'); return r; });
+}
+async function skin(url, env) {
+  const blog = (url.searchParams.get('blog') || '').trim().replace(/^https?:\/\/(m\.)?blog\.naver\.com\//, '').split(/[/?#]/)[0];
+  if (!/^[a-zA-Z0-9_-]{3,40}$/.test(blog)) return new Response(JSON.stringify({ ok: false, error: '블로그 아이디를 확인해 주세요' }), { status: 400, headers: J });
+  return cached(env, 'sk1:' + blog, 21600, url.searchParams.get('fresh'), () => blogSkin(blog));
+}
+async function imgProxy(url) {
+  const u = url.searchParams.get('u') || '';
+  let h; try { h = new URL(u).hostname; } catch (e) { return new Response('bad', { status: 400 }); }
+  if (!/(^|\.)pstatic\.net$/.test(h)) return new Response('bad', { status: 400 });
+  const r = await fetch(u, { headers: { Referer: 'https://blog.naver.com/' }, cf: { cacheTtl: 86400, cacheEverything: true } });
+  return new Response(r.body, { status: r.status, headers: { 'content-type': r.headers.get('content-type') || 'image/png', 'cache-control': 'public, max-age=86400' } });
+}
+
 export default {
   async fetch(req, env, ctx) {
     const url = new URL(req.url);
     const host = url.hostname;
     if (url.pathname === '/api/tester' && req.method === 'POST') return signup(req, env, ctx);
     if (url.pathname === '/api/analyze') return analyze(url, env);
+    if (url.pathname === '/api/top') return top(url, env);
+    if (url.pathname === '/api/skin') return skin(url, env);
+    if (url.pathname === '/api/img') return imgProxy(url);
+    if (url.pathname.startsWith('/auth/')) { const r = await handleAuth(req, env, url); if (r) return r; }
+    if (url.pathname === '/api/me' || url.pathname === '/api/state' || url.pathname === '/api/me/delete') { const r = await handleMe(req, env, url); if (r) return r; }
     if (host === 'www.hugissiat.com') return Response.redirect('https://hugissiat.com' + url.pathname + url.search, 301);
     if (host === 'app.hugissiat.com') {
       // 앱 소개: /app 아래 파일. 개인정보처리방침은 공통
       if (/^\/privacy(\.html)?$/.test(url.pathname)) return env.ASSETS.fetch(req);
       const u2 = new URL(req.url); u2.pathname = '/app' + (url.pathname === '/' ? '/' : url.pathname);
+      return env.ASSETS.fetch(new Request(u2.toString(), req));
+    }
+    if (url.pathname === '/studio' || url.pathname === '/studio/') {
+      const u = await sessionUser(req, env);
+      if (!u) return Response.redirect('https://hugissiat.com/?login=need', 302);
+      const u2 = new URL(req.url); u2.pathname = '/studio';
       return env.ASSETS.fetch(new Request(u2.toString(), req));
     }
     return env.ASSETS.fetch(req);

@@ -4,12 +4,16 @@ const $ = s => document.querySelector(s);
 const esc = s => String(s == null ? '' : s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 const T = window.HS_TEMPLATES, O = window.HS_OPTIONS;
 const LS = 'hs-studio-v1';
-const PRESET_BLOGS = [['hello_gajajia', '지아야가자'], ['event_code', '이코']];
+let ME = null;
+const dec = s => { const t = document.createElement('textarea'); t.innerHTML = String(s || ''); return t.value; };
 
 let st = load() || { blog: '', tpl: 'food', profiles: {} };
+if (!st.mode) st.mode = 'kw';
+if (st.profiles.hello_gajajia && !st.myBlog) { delete st.profiles.hello_gajajia; delete st.profiles.event_code; if (!/^kw:/.test(st.blog)) st.blog = ''; }
 if (!st.profiles) st.profiles = {};
 function load() { try { return JSON.parse(localStorage.getItem(LS) || 'null'); } catch (e) { return null; } }
-function save() { try { localStorage.setItem(LS, JSON.stringify(st)); } catch (e) {} }
+let _sv = 0;
+function save() { try { localStorage.setItem(LS, JSON.stringify(st)); } catch (e) {} clearTimeout(_sv); _sv = setTimeout(() => { if (ME) fetch('/api/state', { method: 'PUT', headers: { 'content-type': 'application/json' }, body: JSON.stringify(st) }).catch(() => {}); }, 800); }
 function prof() { const k = st.blog || '_'; if (!st.profiles[k]) st.profiles[k] = { name: '', design: { ...window.HS_DEFAULT_DESIGN }, ana: null, skip: [] }; return st.profiles[k]; }
 function D() { return prof().design; }
 function toast(m) { const t = $('#toast'); t.textContent = m; t.classList.add('show'); clearTimeout(t._h); t._h = setTimeout(() => t.classList.remove('show'), 1800); }
@@ -25,9 +29,11 @@ function ph(label, w = 4, h = 3) {
 
 /* ---------- 네이버 스마트에디터 마크업 ---------- */
 function span(text, d, o = {}) {
-  let html = esc(text).replace(/==(.+?)==/g, (m, x) => d.highlight ? `</span><span class="se-fs-${o.fs || d.size} se-ff-${d.font}" style="color:#000000;background-color:${d.highlight};">${x}</span><span class="se-fs-${o.fs || d.size} se-ff-${d.font}" style="color:${o.color || '#000000'};">` : x);
+  const base = o.color || d.textColor || '#000000';
+  const hl = x => d.hlMode === 'solid' ? `<span class="se-fs-${o.fs || d.size} se-ff-${d.font}" style="color:#ffffff;background-color:${d.solid || '#1a1915'};"><b>${x}</b></span>` : `<span class="se-fs-${o.fs || d.size} se-ff-${d.font}" style="color:${base};background-color:${d.highlight};">${x}</span>`;
+  let html = esc(text).replace(/==(.+?)==/g, (m, x) => (d.hlMode === 'solid' || d.highlight) ? `</span>${hl(x)}<span class="se-fs-${o.fs || d.size} se-ff-${d.font}" style="color:${base};">` : x);
   if (o.bold) html = `<b>${html}</b>`;
-  return `<span class="se-fs-${o.fs || d.size} se-ff-${d.font}" style="color:${o.color || '#000000'};">${html}</span>`;
+  return `<span class="se-fs-${o.fs || d.size} se-ff-${d.font}" style="color:${base};">${html}</span>`;
 }
 function para(text, d, o = {}) { return `<p class="se-text-paragraph se-text-paragraph-align-${o.align || d.align}" style="line-height:${d.lh};">${span(text, d, o)}</p>`; }
 const wrap = (cls, inner, src) => `<div class="se-component ${cls}">${src ? `<span class="src">${esc(src)}</span>` : ''}<div class="se-component-content">${inner}</div></div>`;
@@ -54,8 +60,15 @@ function seStrip(labels, src) {
 }
 function sePlace(b, src) { return wrap('se-placesMap se-l-map_text', `<div class="se-section se-section-placesMap se-section-align-center se-l-map_text"><div class="se-module se-module-map-text"><a class="se-map-info"><div class="se-map-marker"></div><strong class="se-map-title">${esc(b.name)}</strong><p class="se-map-address">${esc(b.addr)}</p></a></div></div>`, src); }
 function seTable(rows, d, src) {
-  const tr = rows.map((r, i) => `<tr class="se-tr">${r.map(c => `<td class="se-cell" style="width:${(100 / r.length).toFixed(1)}%;height:40px;${i === 0 && rows === rows ? '' : ''}"><div class="se-module se-module-text"><p class="se-text-paragraph se-text-paragraph-align-center">${span(c, d, { bold: i === 0 && rows[0][0] === '메뉴' })}</p></div></td>`).join('')}</tr>`).join('');
+  const head = rows[0][0] === '메뉴';
+  const tr = rows.map((r, i) => `<tr class="se-tr">${r.map((c, j) => { const fill = (head && i === 0) || (!head && j === 0) ? (d.tableFill || '') : ''; const fg = fill && isDark(fill) ? '#ffffff' : ''; return `<td class="se-cell" style="width:${(100 / r.length).toFixed(1)}%;height:40px;${fill ? 'background-color:' + fill + ';' : ''}"><div class="se-module se-module-text"><p class="se-text-paragraph se-text-paragraph-align-center">${span(c, d, { bold: !!fill || (i === 0 && head), color: fg || undefined })}</p></div></td>`; }).join('')}</tr>`).join('');
   return wrap('se-table se-l-default', `<div class="se-section se-section-table se-l-default se-section-align-center" style="width:100%;"><div class="se-table-container"><table class="se-table-content"><tbody>${tr}</tbody></table></div></div>`, src);
+}
+const isDark = c => { const m = /^#?([0-9a-f]{6})$/i.exec(c || ''); if (!m) return false; const n = parseInt(m[1], 16); return ((n >> 16) * 299 + ((n >> 8) & 255) * 587 + (n & 255) * 114) / 1000 < 140; };
+function seBox(lines, d, src) {
+  const fg = isDark(d.boxFill) ? '#ffffff' : '#000000';
+  const ps = lines.map((l, i) => `<p class="se-text-paragraph se-text-paragraph-align-left" style="line-height:1.9;"><span class="se-fs-fs15 se-ff-${d.font}" style="color:${fg};background-color:${d.boxFill};">${i === 0 ? '<b>' + esc(l) + '</b>' : esc(l)}</span></p>`).join('');
+  return wrap('se-table se-l-default', `<div class="se-section se-section-table se-l-default se-section-align-center" style="width:100%;"><div class="se-table-container"><table class="se-table-content" style="border:none;"><tbody><tr class="se-tr"><td class="se-cell" style="width:100%;padding:16px 18px;border:none;background-color:${d.boxFill};"><div class="se-module se-module-text">${ps}</div></td></tr></tbody></table></div></div>`, src);
 }
 function seSticker() { return `<div class="se-component se-sticker se-l-default"><div class="hs-sticker"><span>🌱</span></div></div>`; }
 function seLink(b, src) { return wrap('se-oglink se-l-default', `<div class="hs-link"><i></i><div><b>${esc(b.title)}</b><small>smartstore.naver.com</small></div></div>`, src); }
@@ -82,7 +95,7 @@ function renderDoc() {
     else if (b.t === 'quote') out.push(seQuote(b.text, d.quote, d, {}, b.src));
     else if (b.t === 'line') { if (d.line !== 'none') out.push(seLine(d)); }
     else if (b.t === 'place') out.push(sePlace(b, b.src));
-    else if (b.t === 'info') out.push(seQuote(['📍 매장 이용 정보', ...b.lines.slice(0)], d.infoQuote, d, { boldFirst: true }, b.src));
+    else if (b.t === 'info') out.push(d.boxFill ? seBox(['📍 매장 이용 정보', ...b.lines], d, b.src) : seQuote(['📍 매장 이용 정보', ...b.lines.slice(0)], d.infoQuote, d, { boldFirst: true }, b.src));
     else if (b.t === 'table') out.push(seTable(b.rows, d, b.src));
     else if (b.t === 'sticker') { if (d.sticker) out.push(seSticker()); }
     else if (b.t === 'link') out.push(seLink(b, b.src));
@@ -158,6 +171,10 @@ function seg(key, opts, label) {
   const d = D();
   return `<div class="row"><label>${label}</label><div class="seg" data-key="${key}">${opts.map(([v, n]) => `<button type="button" data-v="${v}" class="${String(d[key]) === String(v) ? 'on' : ''}">${n}</button>`).join('')}</div></div>`;
 }
+function sw(key, colors, label, allowNone) {
+  const d = D();
+  return `<div class="row"><label>${label}</label><div class="sw" data-key="${key}">${colors.map(c => `<button type="button" data-v="${c}" class="${c ? '' : 'none'}${String(d[key] || '') === c ? ' on' : ''}" style="${c ? 'background:' + c : ''}" title="${c || '안 씀'}"></button>`).join('')}<input type="color" class="cpick" data-ck="${key}" value="${/^#[0-9a-f]{6}$/i.test(d[key] || '') ? d[key] : '#888888'}" title="직접 고르기"></div></div>`;
+}
 function renderDesign() {
   const d = D();
   $('#design').innerHTML =
@@ -168,7 +185,12 @@ function renderDesign() {
     (d.sub === 'quote' ? seg('subQuote', O.quotes, '소제목 인용구') : '') +
     seg('quote', O.quotes, '강조 한 문장') +
     seg('photo', [['strip', '2~3장 묶기'], ['single', '한 장씩']], '사진') +
-    `<div class="row"><label>형광펜</label><div class="sw" data-key="highlight">${O.highlights.map(c => `<button type="button" data-v="${c}" class="${c ? '' : 'none'}${d.highlight === c ? ' on' : ''}" style="${c ? 'background:' + c : ''}" title="${c || '안 씀'}"></button>`).join('')}</div></div>` +
+    sw('textColor', O.textColors, '본문 글자색') +
+    sw('subColor', O.textColors, '포인트 글자색 (소제목)') +
+    seg('hlMode', [['mark', '형광펜'], ['solid', '진한 배경']], '강조 배경') +
+    (d.hlMode === 'solid' ? sw('solid', O.solids, '진한 배경색 (흰 글씨)') : sw('highlight', O.highlights, '형광펜 색', true)) +
+    sw('boxFill', ['', ...O.boxes], '이용 정보 박스 채우기', true) +
+    sw('tableFill', ['', ...O.boxes, ...O.solids], '표 머리 채우기', true) +
     seg('sticker', [[true, '써요'], [false, '안 써요']], '스티커') +
     seg('notice', [['bottom', '맨 아래'], ['top', '맨 위'], ['none', '안 넣음']], '대가 표기') +
     (d.notice !== 'none' ? `<div class="row"><textarea data-text="noticeText">${esc(d.noticeText)}</textarea></div>` : '') +
@@ -177,15 +199,72 @@ function renderDesign() {
     let v = b.dataset.v; if (v === 'true') v = true; else if (v === 'false') v = false;
     d[g.dataset.key] = v; changed();
   }));
+  $('#design').querySelectorAll('.cpick').forEach(c => c.oninput = () => { d[c.dataset.ck] = c.value; save(); renderDoc(); });
   $('#design').querySelectorAll('[data-text]').forEach(t => t.oninput = () => { d[t.dataset.text] = t.value; save(); renderDoc(); });
   const a = prof().ana;
-  $('#designFrom').textContent = a ? `${prof().name || st.blog}에서 읽어옴` : '';
+  $('#designFrom').textContent = a ? `구성: ${/^kw:/.test(st.blog) ? st.blog.slice(3) + ' 상위 글' : (prof().name || st.blog)}` : '';
+  renderMyColor();
+}
+
+/* ---------- 내 블로그 색 ---------- */
+const MILD = { textColor: '#000000', subColor: '#000000', hlMode: 'mark', highlight: '#fff3b0', solid: '#333333', boxFill: '#f5f5f5', tableFill: '#f1f1f1' };
+const rgb = h => { const n = parseInt(h.slice(1), 16); return [n >> 16, (n >> 8) & 255, n & 255]; };
+const hx = a => '#' + a.map(v => Math.max(0, Math.min(255, Math.round(v))).toString(16).padStart(2, '0')).join('');
+const mix = (h, w, t) => { const a = rgb(h), b = rgb(w); return hx(a.map((v, i) => v + (b[i] - v) * t)); };
+function hsl(h) { const [r, g, b] = rgb(h).map(v => v / 255); const mx = Math.max(r, g, b), mn = Math.min(r, g, b), l = (mx + mn) / 2; const s = mx === mn ? 0 : (l > .5 ? (mx - mn) / (2 - mx - mn) : (mx - mn) / (mx + mn)); return { s, l }; }
+const lum = h => { const [r, g, b] = rgb(h).map(v => { v /= 255; return v <= .03928 ? v / 12.92 : Math.pow((v + .055) / 1.055, 2.4); }); return .2126 * r + .7152 * g + .0722 * b; };
+const darkFor = (h, need) => { let c = h, i = 0; while ((1.05) / (lum(c) + .05) < need && i++ < 20) c = mix(c, '#000000', .08); return c; };
+async function imgColors(url) {
+  if (!url) return [];
+  return new Promise(res => {
+    const im = new Image(); im.crossOrigin = 'anonymous';
+    im.onload = () => { try {
+      const cv = document.createElement('canvas'); const W = 80, H = Math.max(8, Math.round(80 * im.height / im.width)); cv.width = W; cv.height = H;
+      const x = cv.getContext('2d'); x.drawImage(im, 0, 0, W, H); const px = x.getImageData(0, 0, W, H).data; const bin = {};
+      for (let i = 0; i < px.length; i += 4) { if (px[i + 3] < 200) continue; const k = (px[i] >> 4) + ',' + (px[i + 1] >> 4) + ',' + (px[i + 2] >> 4); const b = bin[k] || (bin[k] = { n: 0, r: 0, g: 0, b: 0 }); b.n++; b.r += px[i]; b.g += px[i + 1]; b.b += px[i + 2]; }
+      res(Object.values(bin).sort((a, b) => b.n - a.n).slice(0, 12).map(b => ({ c: hx([b.r / b.n, b.g / b.n, b.b / b.n]), n: b.n })));
+    } catch (e) { res([]); } };
+    im.onerror = () => res([]); im.src = '/api/img?u=' + encodeURIComponent(url);
+  });
+}
+function pickPalette(sk, cols) {
+  const cand = [sk.menuOn, ...cols.map(c => c.c)].filter(Boolean);
+  const accent = cand.find(c => { const { s, l } = hsl(c); return s >= .22 && l >= .22 && l <= .78; });
+  if (!accent) return { ...MILD, _src: 'mild' };
+  const pageBg = [sk.postBg, sk.bg].find(c => c && c !== '#ffffff' && hsl(c).l > .9);
+  const t = sk.title && hsl(sk.title).l < .2 ? sk.title : '#000000';
+  return { textColor: t, subColor: darkFor(accent, 3.2), hlMode: 'mark', highlight: mix(accent, '#ffffff', .75), solid: darkFor(accent, 4.5), boxFill: pageBg || mix(accent, '#ffffff', .9), tableFill: mix(accent, '#ffffff', .82), _src: 'skin', _accent: accent };
+}
+function paletteDesign() { const p = st.palette && st.palette.colors || MILD; const o = {}; Object.keys(MILD).forEach(k => o[k] = p[k]); return o; }
+async function loadMyColor(id) {
+  $('#myColor').innerHTML = '<div class="load"><i></i>내 블로그 스킨을 보는 중…</div>';
+  try {
+    const j = await (await fetch('/api/skin?blog=' + encodeURIComponent(id))).json();
+    if (!j.ok) throw new Error(j.error || '불러오지 못했어요');
+    const cols = [...await imgColors(j.headImg), ...await imgColors(j.bgImg)];
+    st.myBlog = id; st.palette = { blog: id, name: j.name, headImg: j.headImg, colors: pickPalette(j, cols) };
+    Object.values(st.profiles).forEach(p => { if (p.design) Object.assign(p.design, paletteDesign()); });
+    save(); changed(); toast(st.palette.colors._src === 'skin' ? '내 블로그 색을 맞췄어요' : '눈에 띄는 색이 없어 무난한 색으로 했어요');
+  } catch (e) { $('#myColor').innerHTML = '<div class="err">' + esc(e.message) + '</div>'; setTimeout(renderMyColor, 2500); }
+}
+function renderMyColor() {
+  const el = $('#myColor'); if (!el) return;
+  const p = st.palette;
+  if (!p) {
+    el.innerHTML = '<div class="lb">색은 내 블로그에 맞추기</div><form class="r" id="mcForm"><input id="mcId" placeholder="내 블로그 아이디" value="' + esc((ME && ME.blogGuess) || '') + '"><button>맞추기</button></form>';
+    $('#mcForm').onsubmit = e => { e.preventDefault(); const v = $('#mcId').value.trim().replace(/^https?:\/\/(m\.)?blog\.naver\.com\//, '').split(/[/?#]/)[0]; if (v) loadMyColor(v); };
+    return;
+  }
+  const c = p.colors;
+  el.innerHTML = '<div class="lb">' + esc(p.name || p.blog) + ' 색 <a href="#" id="mcRe">바꾸기</a></div>' + (p.headImg ? '<div class="hd" style="background-image:url(/api/img?u=' + encodeURIComponent(p.headImg) + ')"></div>' : '') + '<div class="dots">' + [c.subColor, c.highlight, c.boxFill, c.tableFill].map(x => '<i style="background:' + x + '"></i>').join('') + '<span>' + (c._src === 'skin' ? '스킨에서 뽑은 색' : '무난한 기본색') + '</span></div>';
+  $('#mcRe').onclick = e => { e.preventDefault(); st.palette = null; save(); renderMyColor(); };
 }
 
 /* ---------- 왼쪽: 블로그·분석·구성 ---------- */
 function renderBlogs() {
-  const have = Object.keys(st.profiles).filter(k => k !== '_');
-  const list = [...PRESET_BLOGS.filter(([id]) => !have.includes(id)).map(([id, n]) => [id, n]), ...have.map(id => [id, st.profiles[id].name || id])];
+  const have = Object.keys(st.profiles).filter(k => k !== '_' && st.profiles[k].ana);
+  const list = have.map(id => [id, /^kw:/.test(id) ? '🔍 ' + id.slice(3) : (st.profiles[id].name || id)]);
+  $('#blogs').hidden = !list.length;
   $('#blogs').innerHTML = list.map(([id, n]) => `<button type="button" data-b="${id}" class="${st.blog === id ? 'on' : ''}">${esc(n)}</button>`).join('');
   $('#blogs').querySelectorAll('button').forEach(b => b.onclick = () => selectBlog(b.dataset.b));
 }
@@ -196,14 +275,15 @@ function selectBlog(id) {
 }
 async function analyze(id, fresh) {
   st.blog = id; const p = prof(); save(); renderBlogs();
-  $('#anaBox').innerHTML = '<div class="load"><i></i>최근 글을 읽는 중… (10~20초)</div>';
+  const isKw = /^kw:/.test(id);
+  $('#anaBox').innerHTML = `<div class="load"><i></i>${isKw ? '네이버 블로그 검색 상위 글을 읽는 중… (20~30초)' : '최근 글을 읽는 중… (10~20초)'}</div>`;
   try {
-    const r = await fetch(`/api/analyze?blog=${encodeURIComponent(id)}&n=8&kind=${$('#reviewOnly').checked ? 'review' : 'all'}${fresh ? '&fresh=1' : ''}`);
+    const r = await fetch(isKw ? `/api/top?q=${encodeURIComponent(id.slice(3))}${fresh ? '&fresh=1' : ''}` : `/api/analyze?blog=${encodeURIComponent(id)}&n=8&kind=${$('#reviewOnly').checked ? 'review' : 'all'}${fresh ? '&fresh=1' : ''}`);
     const j = await r.json();
     if (!j.ok) throw new Error(j.error || '불러오지 못했어요');
     if (!j.posts.length) throw new Error($('#reviewOnly').checked ? '사진 많은 후기 글을 못 찾았어요. 체크를 풀고 다시 해 보세요.' : '공개 글이 없어요');
     p.name = j.name || id; p.ana = j; p.skip = [];
-    p.design = { ...window.HS_DEFAULT_DESIGN, ...designFrom(j.posts), noticeText: p.design.noticeText };
+    p.design = { ...window.HS_DEFAULT_DESIGN, ...designFrom(j.posts), ...paletteDesign(), noticeText: p.design.noticeText };
     save(); renderAll(); toast('디자인 결을 읽어왔어요');
   } catch (e) { $('#anaBox').innerHTML = `<div class="err">${esc(e.message)}</div>`; }
 }
@@ -229,10 +309,8 @@ function designFrom(posts) {
   const rows = posts.reduce((a, p) => { const r = p.imageRows || {}; a.s += r.single || 0; a.m += (r.strip2 || 0) + (r.strip3 || 0); return a; }, { s: 0, m: 0 });
   d.photo = rows.m >= rows.s ? 'strip' : 'single';
   const avg = posts.reduce((a, p) => a + (p.avgParaLen || 0), 0) / posts.length; d.short = avg < 48;
-  const hl = top(sum(posts, 'highlights'))[0]; d.highlight = hl ? hl[0] : '';
   d.sticker = posts.reduce((a, p) => a + (p.stickers || 0), 0) / posts.length >= 0.8;
   const sp = posts.map(p => p.sponsor).filter(Boolean);
-  d.notice = sp.length ? (sp.filter(s => s.at === 'top').length > sp.length / 2 ? 'top' : 'bottom') : 'bottom';
   if (sp.find(s => s.text)) d.noticeText = sp.find(s => s.text).text;
   const signs = posts.flatMap(p => (p.quotes || []).slice(-1)).filter(t => /ⓒ|©/.test(t));
   d.sign = signs[0] || '';
@@ -247,7 +325,7 @@ function renderAna() {
   const subs = ps.length ? Math.round(ps.reduce((x, q) => x + Object.values(q.quoteStyles || {}).reduce((a, b) => a + b, 0) + ((q.comps || {}).sectionTitle || 0), 0) / ps.length) : 0;
   const places = ps.filter(q => q.places).length;
   $('#anaBox').innerHTML = `<div class="sum"><div><b>${imgs}장</b><span>글 하나 사진</span></div><div><b>${chars.toLocaleString()}자</b><span>글 하나 길이</span></div><div><b>${subs}개</b><span>소제목·인용구</span></div><div><b>${places}/${ps.length}</b><span>장소 지도 넣은 글</span></div></div>
-  <div class="posts">${a.posts.map(q => `<label><input type="checkbox" data-l="${q.logNo}" ${(p.skip || []).includes(q.logNo) ? '' : 'checked'}><span>${esc(q.title)}<br><small>${esc(q.category || '')} · 사진 ${q.images}</small></span></label>`).join('')}</div>
+  <div class="posts">${a.posts.map(q => `<label><input type="checkbox" data-l="${q.logNo}" ${(p.skip || []).includes(q.logNo) ? '' : 'checked'}><span>${esc(dec(q.title))}<br><small>${q.rank ? `<b class="rk">${q.rank}위</b> ${esc(q.nick || q.blogId)} · ` : esc(q.category ? q.category + ' · ' : '')}사진 ${q.images} · <a href="${q.url}" target="_blank" rel="noopener">원문</a></small></span></label>`).join('')}</div>
   <div class="mut" style="margin:8px 0 0"><a href="#" id="reAna" style="color:var(--sage-d)">다시 읽기</a></div>`;
   $('#anaBox').querySelectorAll('[data-l]').forEach(c => c.onchange = () => {
     const s = new Set(p.skip || []); c.checked ? s.delete(c.dataset.l) : s.add(c.dataset.l); p.skip = [...s];
@@ -320,14 +398,16 @@ ${order.join('\n')}
 - 구분선: ${lName(d.line)}
 - 사진: ${d.photo === 'strip' ? '2~3장씩 묶어서 넣고, 사진 묶음마다 2~3줄 설명' : '한 장씩 넣고 사진마다 1~2줄 설명'}
 - 줄 나눔: ${d.short ? `한 문장씩 줄을 나눠요 (한 줄 평균 ${avg || 38}자 안팎)` : '2~3문장을 한 문단으로'}
-- 형광펜: ${d.highlight ? `${d.highlight}, 글 전체에서 2~3군데만` : '안 씀'}
+- 본문 글자색: ${d.textColor || '#000000'} / 소제목 글자색: ${d.subColor || '#000000'}
+- 강조: ${d.hlMode === 'solid' ? `진한 배경 ${d.solid} + 흰 글씨(굵게)` : (d.highlight ? `형광펜 ${d.highlight}` : '안 씀')}, 글 전체에서 2~3군데만
+- 이용 정보 박스: ${d.boxFill ? `표 한 칸에 배경 ${d.boxFill}` : '인용구'}${d.tableFill ? ` / 표 머리 칸 배경 ${d.tableFill}` : ''}
 - 스티커: ${d.sticker ? '처음과 끝에 하나씩' : '안 씀'}
 - 대가 표기: ${d.notice === 'none' ? '넣지 않음' : `${d.notice === 'top' ? '맨 위' : '맨 아래'} · "${d.noticeText}"`}
 ${d.sign ? `- 마지막 서명: ${d.sign}\n` : ''}
 ## 말투
 - 자주 쓰는 끝맺음: ${en.join(', ') || '(분석 전)'}
 - 참고 글 (Aside가 읽고 말투를 맞춰요):
-${ps.slice(0, 6).map(q => `  - ${q.title} ${q.url}`).join('\n') || '  - (블로그를 불러오면 채워져요)'}
+${ps.slice(0, 6).map(q => `  - ${dec(q.title)} ${q.url}`).join('\n') || '  - (블로그를 불러오면 채워져요)'}
 
 ## 지키기
 - 후기씨앗 경험 기록(MD)에 없는 경험·감정·숫자는 지어내지 않아요. 비어 있으면 그 문단은 빼요.
@@ -349,14 +429,27 @@ $('#dl').onclick = () => {
 $('#cp').onclick = async () => { try { await navigator.clipboard.writeText(buildProfile()); toast('복사했어요'); } catch (e) { toast('복사하지 못했어요'); } };
 
 /* ---------- 기타 ---------- */
+const KW_CHIPS = ['맛집 후기', '카페 추천', '아이랑 가볼만한곳', '펜션 후기', '제품 사용 후기'];
+$('#kwChips').innerHTML = KW_CHIPS.map(k => '<button type="button" data-k="' + k + '">' + k + '</button>').join('');
+$('#kwChips').querySelectorAll('button').forEach(b => b.onclick = () => analyze('kw:' + b.dataset.k));
+$('#kwForm').onsubmit = e => { e.preventDefault(); const v = $('#kw').value.trim(); if (v.length < 2) return; $('#kw').value = ''; analyze('kw:' + v); };
+function setMode(m) { st.mode = m; save(); document.querySelectorAll('.srcTabs button').forEach(b => b.classList.toggle('on', b.dataset.m === m)); $('#kwForm').hidden = $('#kwChips').hidden = m !== 'kw'; $('#blogForm').hidden = $('#reviewWrap').hidden = m !== 'blog'; }
+document.querySelectorAll('.srcTabs button').forEach(b => b.onclick = () => setMode(b.dataset.m));
 $('#blogForm').onsubmit = e => { e.preventDefault(); const v = $('#blogId').value.trim().replace(/^https?:\/\/(m\.)?blog\.naver\.com\//, '').split(/[/?#]/)[0]; if (!v) return; $('#blogId').value = ''; analyze(v); };
-$('#reviewOnly').onchange = () => { if (st.blog) analyze(st.blog); };
+$('#reviewOnly').onchange = () => { if (st.blog && !/^kw:/.test(st.blog)) analyze(st.blog); };
 $('#viewMobile').onclick = () => { $('#paper').classList.add('mobile'); $('#viewMobile').classList.add('on'); $('#viewPc').classList.remove('on'); };
 $('#viewPc').onclick = () => { $('#paper').classList.remove('mobile'); $('#viewPc').classList.add('on'); $('#viewMobile').classList.remove('on'); };
 $('#showSrc').onchange = e => $('#paper').classList.toggle('no-src', !e.target.checked);
 function changed() { save(); renderBar(); renderDesign(); renderDoc(); }
 function renderAll() { renderBlogs(); renderAna(); renderTone(); renderTpls(); renderBar(); renderDesign(); renderDoc(); }
 $('#paper').classList.add('mobile');
+setMode(st.mode || 'kw');
 renderAll();
-if (!st.blog) selectBlog('hello_gajajia');
+fetch('/api/me').then(r => r.ok ? r.json() : null).then(j => {
+  if (!j) return; ME = j;
+  $('#me').innerHTML = (j.img ? '<img src="' + esc(j.img) + '" alt="">' : '') + esc(j.nickname || '로그아웃'); $('#me').title = '로그아웃';
+  fetch('/api/state').then(r => r.json()).then(x => { if (x.ok && x.state && x.state.profiles && !localStorage.getItem(LS + '-synced')) { st = { ...st, ...x.state }; localStorage.setItem(LS + '-synced', '1'); save(); setMode(st.mode || 'kw'); renderAll(); } });
+  if (!st.palette && j.blogGuess) loadMyColor(j.blogGuess); else renderMyColor();
+}).catch(() => {});
+if (!st.blog) analyze('kw:맛집 후기');
 })();

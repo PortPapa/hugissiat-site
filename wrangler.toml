@@ -2,6 +2,10 @@ name = "hugissiat-site"
 main = "src/worker.js"
 compatibility_date = "2026-10-01"
 
+[vars]
+NAVER_ID = "BuUDUqhSwFmC93hERUfs"
+GOOGLE_ID = "469955623484-2mpp4rmq1cpfesscggs69ofipq825c3t.apps.googleusercontent.com"
+
 [assets]
 directory = "./public"
 binding = "ASSETS"
