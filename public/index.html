@@ -64,6 +64,20 @@ section{padding:64px 0}
 .tl div b{display:block;font-size:22px;color:var(--sage-d);margin-bottom:2px}
 .trust{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin-top:36px}
 .trust span{background:var(--card);border:1px solid var(--line);border-radius:999px;padding:8px 16px;font-size:14.5px}
+[hidden]{display:none!important}
+.tform{display:grid;gap:10px;max-width:420px;margin:0 auto;text-align:left}
+.tform input[type=text],.tform input[type=email]{height:52px;border-radius:14px;border:1px solid var(--line);background:var(--bg);padding:0 16px;font:inherit;font-size:16px;color:var(--ink)}
+.tform input:focus{outline:2px solid var(--sage);outline-offset:1px}
+.tform .hp{position:absolute;left:-9999px;width:1px;height:1px}
+.agree{display:flex;gap:8px;align-items:flex-start;font-size:13.5px;color:var(--sub);line-height:1.5}.agree input{margin-top:3px;accent-color:var(--sage)}.agree a{color:var(--sage-d)}
+.tform .btn{width:100%;margin-top:4px}
+.terr{color:#D9534F;font-size:14px;font-weight:600;min-height:1em;text-align:center}
+.tdone{max-width:440px;margin:0 auto;display:grid;gap:10px;text-align:left}
+.tdone-h{text-align:center;font-size:18px;margin-bottom:4px}
+.tstep{display:flex;gap:14px;align-items:center;background:var(--bg);border:1px solid var(--line);border-radius:16px;padding:14px 16px;text-decoration:none;color:var(--ink)}
+.tstep i{flex:none;width:32px;height:32px;border-radius:50%;background:var(--sage);color:#fff;font-style:normal;font-weight:800;display:flex;align-items:center;justify-content:center}
+.tstep span{display:grid;gap:2px}.tstep small{color:var(--sub);font-size:13.5px;line-height:1.45}
+.tstep.off{opacity:.45;pointer-events:none}.tstep.off i{background:#B9B3A8}
 footer{border-top:1px solid var(--line);padding:30px 0 40px;color:var(--sub);font-size:14px}
 footer .wrap{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
 footer a{text-decoration:none;margin-right:16px}
@@ -140,8 +154,21 @@ footer a{text-decoration:none;margin-right:16px}
     <h2 class="h2">테스터를 모집해요</h2>
     <p class="lead" style="margin-bottom:0">플레이 스토어 정식 출시 전, 먼저 써보고 의견을 들려주세요.</p>
     <div class="tl"><div><b>12명</b>모집</div><div><b>14일</b>설치 유지</div><div><b>무료</b>안드로이드</div></div>
-    <a class="btn" id="testerBtn" href="mailto:hello@hugissiat.com?subject=%ED%9B%84%EA%B8%B0%EC%94%A8%EC%95%97%20%ED%85%8C%EC%8A%A4%ED%84%B0%20%EC%8B%A0%EC%B2%AD&body=%ED%94%8C%EB%A0%88%EC%9D%B4%20%EC%8A%A4%ED%86%A0%EC%96%B4%EC%97%90%EC%84%9C%20%EC%93%B0%EB%8A%94%20%EA%B5%AC%EA%B8%80%20%EA%B3%84%EC%A0%95%20%EC%9D%B4%EB%A9%94%EC%9D%BC%3A%20">테스터 신청하기</a>
-    <div class="note">플레이 스토어에서 쓰는 구글 계정 이메일을 보내주시면 초대 링크를 드려요.</div>
+    <form id="tform" class="tform" novalidate>
+      <input name="name" type="text" placeholder="이름 (닉네임도 괜찮아요)" autocomplete="name" required>
+      <input name="email" type="email" placeholder="플레이 스토어에서 쓰는 구글 메일" autocomplete="email" required>
+      <input name="website" type="text" tabindex="-1" autocomplete="off" class="hp" aria-hidden="true">
+      <label class="agree"><input type="checkbox" name="agree"> 테스트 안내를 위해 이름과 이메일을 받는 데 동의해요 <a href="/privacy.html#tester" target="_blank">자세히</a></label>
+      <button class="btn" type="submit">테스터 신청하기</button>
+      <div class="terr" id="terr"></div>
+    </form>
+    <div id="tdone" class="tdone" hidden>
+      <b class="tdone-h">신청됐어요! 아래 순서대로 해주세요</b>
+      <a class="tstep" id="s1" target="_blank" rel="noopener"><i>1</i><span><b>테스터 그룹 가입</b><small>신청한 구글 계정으로 "그룹 가입"을 눌러요. 이때 테스터로 등록돼요.</small></span></a>
+      <a class="tstep" id="s2" target="_blank" rel="noopener"><i>2</i><span><b>테스트 참여하기</b><small>"테스터 되기"를 눌러요.</small></span></a>
+      <a class="tstep" id="s3" target="_blank" rel="noopener"><i>3</i><span><b>플레이 스토어에서 설치</b><small>설치 후 14일 동안 지우지 말아 주세요.</small></span></a>
+      <div class="note" id="tnote"></div>
+    </div>
   </div>
   <div class="trust"><span>회원가입 없음</span><span>기록은 내 폰과 내 구글 드라이브에만</span><span>광고 없음</span></div>
 </div></section>
@@ -151,5 +178,22 @@ footer a{text-decoration:none;margin-right:16px}
   <div><a href="/privacy.html">개인정보처리방침</a><a href="mailto:hello@hugissiat.com">문의</a></div>
   <div>© 2026 PortPapa</div>
 </div></footer>
+<script>
+(()=>{const OPEN=false;const f=document.getElementById('tform');if(!f)return;const err=document.getElementById('terr');
+f.addEventListener('submit',async e=>{e.preventDefault();err.textContent='';const fd=new FormData(f);
+  const o={name:fd.get('name'),email:fd.get('email'),website:fd.get('website'),agree:!!fd.get('agree')};
+  if(!String(o.name).trim()){err.textContent='이름을 적어주세요';return}
+  if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(o.email).trim())){err.textContent='이메일 주소를 확인해 주세요';return}
+  if(!o.agree){err.textContent='개인정보 수집에 동의해 주세요';return}
+  const btn=f.querySelector('button');btn.disabled=true;btn.textContent='신청하는 중…';
+  try{const r=await fetch('/api/tester',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify(o)});const j=await r.json();
+    if(!j.ok){err.textContent=j.error||'신청하지 못했어요';btn.disabled=false;btn.textContent='테스터 신청하기';return}
+    document.getElementById('s1').href=j.group;document.getElementById('s2').href=j.optin;document.getElementById('s3').href=j.store;
+    if(!OPEN){document.getElementById('s2').classList.add('off');document.getElementById('s3').classList.add('off');document.getElementById('tnote').textContent='지금은 구글 검토 중이라 1번만 해두시면 돼요. 2·3번이 열리면 메일로 알려드릴게요.'}
+    else document.getElementById('tnote').textContent=j.again?'이미 신청하셨어요. 위 순서만 다시 확인해 주세요.':'';
+    f.hidden=true;document.getElementById('tdone').hidden=false;
+  }catch(x){err.textContent='인터넷 연결을 확인해 주세요';btn.disabled=false;btn.textContent='테스터 신청하기'}});
+})();
+</script>
 </body>
 </html>

@@ -1,8 +1,19 @@
 name = "hugissiat-site"
+main = "src/worker.js"
 compatibility_date = "2026-10-01"
 
 [assets]
 directory = "./public"
+binding = "ASSETS"
+run_worker_first = ["/api/*"]
+
+[[kv_namespaces]]
+binding = "TESTERS"
+id = "1a7b63d955b14569baf857ba95302eff"
+
+[[send_email]]
+name = "NOTIFY"
+destination_address = "lcjun37@gmail.com"
 
 [[routes]]
 pattern = "hugissiat.com"
