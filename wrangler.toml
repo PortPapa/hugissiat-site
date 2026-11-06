@@ -1,0 +1,13 @@
+name = "hugissiat-site"
+compatibility_date = "2026-10-01"
+
+[assets]
+directory = "./public"
+
+[[routes]]
+pattern = "hugissiat.com"
+custom_domain = true
+
+[[routes]]
+pattern = "www.hugissiat.com"
+custom_domain = true
