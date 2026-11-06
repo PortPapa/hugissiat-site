@@ -5,7 +5,7 @@ compatibility_date = "2026-10-01"
 [assets]
 directory = "./public"
 binding = "ASSETS"
-run_worker_first = ["/api/*"]
+run_worker_first = true
 
 [[kv_namespaces]]
 binding = "TESTERS"
@@ -21,4 +21,8 @@ custom_domain = true
 
 [[routes]]
 pattern = "www.hugissiat.com"
+custom_domain = true
+
+[[routes]]
+pattern = "app.hugissiat.com"
 custom_domain = true

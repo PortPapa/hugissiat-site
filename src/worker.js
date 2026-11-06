@@ -53,6 +53,8 @@ export default {
     const url = new URL(req.url);
     if (url.pathname === '/api/tester' && req.method === 'POST') return signup(req, env, ctx);
     if (url.hostname === 'www.hugissiat.com') return Response.redirect('https://hugissiat.com' + url.pathname + url.search, 301);
+    // hugissiat.com 본 사이트가 생기기 전까지는 첫 화면을 앱 소개로 보낸다 (개인정보처리방침 등 파일은 그대로)
+    if (url.hostname === 'hugissiat.com' && (url.pathname === '/' || url.pathname === '/index.html')) return Response.redirect('https://app.hugissiat.com/' + url.search + url.hash, 302);
     return env.ASSETS.fetch(req);
   },
 };
