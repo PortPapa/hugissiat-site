@@ -3,98 +3,372 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>후기씨앗 - 잘 뜨는 글 구성에 내 경험을 담아요</title>
-<meta name="description" content="내 네이버 블로그의 글 구성과 디자인을 읽어서, 후기씨앗에 남긴 실제 경험으로 내가 쓴 것 같은 블로그 글을 만들어요.">
-<meta property="og:title" content="후기씨앗 - 내 블로그 결 그대로 글쓰기">
+<title>후기씨앗 - 잘 뜨는 구성에 내 경험만 담아요</title>
+<meta name="description" content="네이버 블로그 검색 상위 글의 구성은 그대로, 내용은 내가 다녀온 기록으로. 색은 내 블로그에 맞추고 네이버엔 임시저장까지만 해요.">
+<meta property="og:title" content="후기씨앗 - 잘 뜨는 구성에 내 경험만 담아요">
 <meta property="og:description" content="AI 글은 많아도, 내 경험은 나만 써요.">
 <meta property="og:image" content="https://app.hugissiat.com/img/feature-1024x500.png">
 <meta property="og:url" content="https://hugissiat.com/">
-<meta name="theme-color" content="#6F8E6D">
+<meta name="theme-color" content="#f6f3ea">
 <link rel="icon" href="/app/img/icon-512.png">
-<link rel="stylesheet" href="https://editor-static.pstatic.net/v/basic/1.78.1/css/se.viewer.desktop.css">
 <link rel="stylesheet" href="https://hangeul.pstatic.net/hangeul_static/css/maru-buri.css">
-<link rel="stylesheet" href="/s/studio.css">
 <style>
-.hero{max-width:1120px;margin:0 auto;padding:64px 22px 40px;display:grid;grid-template-columns:1.05fr .95fr;gap:40px;align-items:center}
-.hero h1{font-size:46px;line-height:1.22;letter-spacing:-1.4px;margin:0;font-weight:800}.hero h1 em{font-style:normal;color:var(--sage)}
-.hero p{font-size:18px;line-height:1.65;color:var(--sub);margin:18px 0 28px}
-.nbtn{display:inline-flex;align-items:center;gap:10px;height:54px;padding:0 24px;border-radius:12px;background:#03C75A;color:#fff;font-weight:800;font-size:16.5px;text-decoration:none;border:0}
-.nbtn b{font-family:Arial,sans-serif;font-size:19px}.btns{display:flex;flex-wrap:wrap;gap:10px}.gbtn{display:inline-flex;align-items:center;gap:10px;height:54px;padding:0 22px;border-radius:12px;background:#fff;color:#1f1f1f;font-weight:700;font-size:16px;text-decoration:none;border:1px solid #dadce0}.cta .btns{justify-content:center}
-.hero .sub2{font-size:13.5px;color:var(--sub);margin-top:12px}
-.mock{background:#f5f6f7;border:1px solid #e5e5e5;border-radius:18px;padding:16px;box-shadow:0 20px 50px rgba(47,58,46,.10)}
-.mock .paper{max-width:none;padding:22px 20px 26px;pointer-events:none}
-.mock .doc-title{font-size:19px;padding-bottom:12px;margin-bottom:10px}
-.sec{max-width:1120px;margin:0 auto;padding:46px 22px}
-.sec h2{font-size:30px;letter-spacing:-.8px;margin:0 0 8px;text-align:center}.sec .lead{text-align:center;color:var(--sub);margin:0 0 30px;font-size:16px}
-.steps3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
-.st3{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:24px}
-.st3 b{display:inline-flex;width:32px;height:32px;border-radius:50%;background:var(--blush);color:var(--sage-d);align-items:center;justify-content:center;margin-bottom:12px}
-.st3 h3{margin:0 0 6px;font-size:19px}.st3 p{margin:0;color:var(--sub);line-height:1.6;font-size:15px}
-.gal{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
-.gc{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px}
-.gc b{font-size:16px}.gc small{display:block;color:var(--sub);font-size:13.5px;margin:4px 0 10px;line-height:1.45}
-.gc ol{margin:0;padding-left:18px;font-size:13px;color:#555;line-height:1.7}
-.cta{text-align:center;padding:30px 22px 70px}
-.msg{max-width:520px;margin:12px auto 0;padding:10px 14px;border-radius:12px;background:#fff3f0;color:#c0392b;font-size:14px;text-align:center}
-@media (max-width:860px){.hero{grid-template-columns:1fr;padding-top:36px}.hero h1{font-size:32px}.steps3,.gal{grid-template-columns:1fr}}
+html,body{background:#f6f3ea}
+@font-face{font-family:'Freesentation';src:url('https://cdn.jsdelivr.net/gh/projectnoonnu/2404@1.0/Freesentation-4Regular.woff2') format('woff2');font-weight:400;font-display:swap}
+@font-face{font-family:'Freesentation';src:url('https://cdn.jsdelivr.net/gh/projectnoonnu/2404@1.0/Freesentation-5Medium.woff2') format('woff2');font-weight:500;font-display:swap}
+@font-face{font-family:'Freesentation';src:url('https://cdn.jsdelivr.net/gh/projectnoonnu/2404@1.0/Freesentation-6SemiBold.woff2') format('woff2');font-weight:600;font-display:swap}
+:root{
+  --bg:#f6f3ea;--bg2:#ece7da;--ink:#1c231b;--ink-80:rgba(28,35,27,.8);--ink-60:rgba(28,35,27,.62);--ink-40:rgba(28,35,27,.42);--line:rgba(28,35,27,.12);
+  --sage:#5d7d5a;--sage-soft:#e3eadf;--naver:#03c75a;
+  --ease:cubic-bezier(.22,1,.36,1);--ease2:cubic-bezier(.4,0,.2,1);
+  --serif:'MaruBuri','Nanum Myeongjo',serif;--sans:'Freesentation',-apple-system,'Apple SD Gothic Neo','Malgun Gothic',sans-serif;
+}
+*{box-sizing:border-box}
+html{overflow-x:clip}
+body{margin:0;font-family:var(--sans);color:var(--ink);-webkit-font-smoothing:antialiased;word-break:keep-all;line-height:1.55}
+::selection{background:#cfdcc9;color:var(--ink)}
+a{color:inherit}
+:focus-visible{outline:2px solid var(--sage);outline-offset:3px;border-radius:999px}
+.grain{position:fixed;inset:0;pointer-events:none;z-index:90;opacity:.07;mix-blend-mode:multiply;background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 .9 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>")}
+
+/* nav */
+.nav{position:fixed;top:16px;left:0;right:0;margin:0 auto;z-index:50;width:min(1120px,calc(100% - 32px));display:flex;align-items:center;justify-content:space-between;padding:8px 8px 8px 18px;border-radius:999px;background:rgba(246,243,234,.72);backdrop-filter:blur(14px) saturate(1.2);-webkit-backdrop-filter:blur(14px) saturate(1.2);box-shadow:inset 0 0 0 1px rgba(28,35,27,.08),0 6px 20px rgba(28,35,27,.06)}
+.mark{display:flex;align-items:center;gap:8px;font-weight:600;font-size:17px;letter-spacing:-.02em;text-decoration:none}
+.mark svg{width:22px;height:22px;color:var(--sage)}
+.nav .links{display:flex;align-items:center;gap:4px}
+.nav .links a{font-size:14px;font-weight:500;color:var(--ink-60);text-decoration:none;padding:9px 14px;border-radius:999px;transition:color .2s var(--ease2),background .2s var(--ease2)}
+.nav .links a:hover{color:var(--ink);background:rgba(28,35,27,.05)}
+.nav .links a.solid{background:var(--ink);color:#fff;margin-left:4px}
+.nav .links a.solid:hover{background:#2c362a}
+
+/* hero */
+.hero{min-height:100vh;min-height:100dvh;display:flex;flex-direction:column;align-items:center;text-align:center;padding:150px 24px 0}
+.badge{display:inline-flex;align-items:center;gap:10px;padding:5px 14px 5px 5px;border-radius:999px;background:rgba(255,255,255,.55);box-shadow:inset 0 0 0 1px var(--line);font-size:13.5px;color:var(--ink-80)}
+.badge b{font-weight:600;font-size:12px;letter-spacing:.06em;background:var(--sage);color:#fff;border-radius:999px;padding:3px 9px}
+h1{margin:26px 0 0;font-weight:500;font-size:clamp(44px,6.6vw,98px);line-height:1.04;letter-spacing:-.045em}
+h1 .ln{display:block;white-space:nowrap}
+h1 em{font-style:normal;font-family:var(--serif);font-weight:600;font-size:.9em;color:var(--sage);letter-spacing:-.04em}
+.lead{margin:26px auto 0;max-width:34rem;font-size:clamp(16px,1.35vw,19px);line-height:1.6;color:var(--ink-60)}
+.cta{display:flex;flex-wrap:wrap;justify-content:center;gap:10px;margin-top:34px}
+.btn{display:inline-flex;align-items:center;gap:10px;height:52px;padding:0 24px 0 20px;border-radius:999px;font-size:15.5px;font-weight:600;text-decoration:none;border:0;cursor:pointer;transition:transform .2s var(--ease2),box-shadow .2s var(--ease2),background .2s}
+.btn:active{transform:scale(.97)}
+.btn.nv{background:var(--naver);color:#fff;box-shadow:0 6px 18px rgba(3,199,90,.22)}
+.btn.nv:hover{box-shadow:0 8px 22px rgba(3,199,90,.3)}
+.btn.nv .n{font:900 17px/1 Arial,sans-serif}
+.btn.gg{background:#fff;color:#1f1f1f;box-shadow:inset 0 0 0 1px rgba(28,35,27,.14)}
+.btn.gg:hover{box-shadow:inset 0 0 0 1px rgba(28,35,27,.28),0 4px 14px rgba(28,35,27,.08)}
+.btn .arr{display:inline-grid;place-items:center;width:26px;height:26px;border-radius:50%;background:rgba(255,255,255,.22);transition:transform .25s var(--ease)}
+.btn:hover .arr{transform:translateX(2px)}
+.micro{margin-top:14px;font-size:13px;color:var(--ink-40)}
+.msg{margin:14px auto 0;padding:9px 16px;border-radius:999px;background:#fbe9e4;color:#a8432f;font-size:13.5px;display:inline-block}
+
+/* stage = signature */
+.stage{position:relative;width:min(1180px,100%);margin:64px auto 0;border-radius:36px;background:var(--bg2);box-shadow:inset 0 0 0 1px rgba(28,35,27,.06);padding:44px 48px 0;overflow:hidden;display:grid;grid-template-columns:300px 1fr 560px;align-items:end;gap:0;height:600px}
+.stage .cap{position:absolute;left:48px;top:28px;font-size:12px;font-weight:600;letter-spacing:.14em;color:var(--ink-40)}
+.phone{position:relative;align-self:end;width:300px;height:520px;border-radius:36px 36px 0 0;overflow:hidden;background:#fff;box-shadow:0 0 0 8px #2b3429,0 20px 50px rgba(28,35,27,.18);margin-left:8px}
+.app{position:absolute;inset:0;background:#fffaf2;display:flex;flex-direction:column;font-family:var(--sans);text-align:left}
+.app .hd{display:flex;align-items:center;gap:10px;height:58px;padding:18px 18px 0;font-weight:600;font-size:16px}
+.app .hd svg{width:18px;height:18px}
+.app .pg{display:flex;align-items:center;gap:10px;padding:14px 18px 0;font-size:11.5px;color:#9a9284}
+.app .pg i{flex:1;height:5px;border-radius:9px;background:#ebe4d6;position:relative;overflow:hidden}.app .pg i:after{content:'';position:absolute;inset:0 45% 0 0;background:#6f8e6d;border-radius:9px}
+.app .qq{padding:22px 18px 0;font-size:22px;font-weight:600;letter-spacing:-.03em}
+.app .ops{display:flex;flex-wrap:wrap;gap:7px;padding:14px 18px 0}
+.app .ops span{padding:8px 13px;border-radius:999px;border:1px solid #e6dfd0;font-size:13.5px;background:#fff}
+.app .ops span.on{background:#6f8e6d;border-color:#6f8e6d;color:#fff;font-weight:600}
+.app .memo{margin:18px 18px 0;padding:12px 14px;border-radius:14px;background:#fff;border:1px solid #e6dfd0;font-size:13px;line-height:1.55;color:#4a463e}
+.app .memo b{display:block;font-size:11.5px;color:#9a9284;font-weight:600;margin-bottom:4px}
+.app .ph{display:flex;gap:6px;padding:12px 18px 0}.app .ph span{width:62px;height:62px;border-radius:12px;background:url(/img/food-1.jpg) center/cover}.app .ph span:nth-child(2){background-size:300%;background-position:60% 40%}.app .ph span:nth-child(3){background-image:url(/img/food-3.jpg)}
+.app .nx{margin:auto 18px 22px;height:48px;border-radius:14px;background:#6f8e6d;color:#fff;display:grid;place-items:center;font-weight:600;font-size:15px}
+.flow{position:relative;height:100%;}
+.flow svg.path{position:absolute;left:-30px;top:96px;width:calc(100% + 60px);height:300px;overflow:visible}
+.flow svg.path path{fill:none;stroke:rgba(93,125,90,.45);stroke-width:1.6;stroke-dasharray:4 7;opacity:0;transition:opacity 1.2s var(--ease)}
+.stage.drawn .flow svg.path path{opacity:1}
+.chip{position:absolute;left:44px;display:inline-flex;align-items:center;gap:8px;padding:9px 14px;border-radius:999px;background:#fff;box-shadow:0 4px 14px rgba(28,35,27,.10),inset 0 0 0 1px rgba(28,35,27,.06);font-size:14px;font-weight:500;white-space:nowrap;opacity:0;transform:translate(-30px,6px) scale(.96)}
+.chip i{width:7px;height:7px;border-radius:50%;background:var(--sage);flex:none}
+.chip small{color:var(--ink-40);font-size:12px;font-weight:500}
+.paper{position:relative;align-self:end;height:556px;background:#fff;border-radius:22px 22px 0 0;box-shadow:0 20px 60px rgba(28,35,27,.14);overflow:hidden;display:flex;flex-direction:column}
+.bar{display:flex;align-items:center;gap:14px;height:46px;padding:0 18px;border-bottom:1px solid #eee;font-size:12px;color:#888;flex:none}
+.bar .dots{display:flex;gap:6px}.bar .dots i{width:10px;height:10px;border-radius:50%;background:#e3e3e3}
+.bar .t{flex:1;text-align:center;font-weight:600;color:#666}
+.bar .kw{padding:4px 10px;border-radius:999px;background:var(--sage-soft);color:var(--sage);font-weight:600;font-size:11.5px}
+.doc{padding:26px 44px 40px;font-family:var(--serif);text-align:center;color:#222;flex:1;overflow:hidden}
+.d-title{font-family:var(--sans);font-weight:600;font-size:21px;letter-spacing:-.03em;text-align:left;min-height:31px;padding-bottom:14px;border-bottom:1px solid #f0f0f0;margin-bottom:14px}
+.d-title .caret{display:inline-block;width:2px;height:21px;background:var(--sage);vertical-align:-3px;margin-left:2px;animation:blink 1s steps(1) infinite}
+@keyframes blink{50%{opacity:0}}
+.d-note{font-size:12.5px;color:#999;margin-bottom:14px}
+.d-strip{display:grid;grid-template-columns:1.25fr 1fr;gap:4px;margin:0 -8px 16px;height:150px}
+.d-strip span{background:url(/img/food-1.jpg) center/cover;border-radius:2px;clip-path:inset(0 0 100% 0)}
+.d-strip span:last-child{background-image:url(/img/food-1.jpg);background-size:260%;background-position:62% 38%}
+.d-p{font-size:15.5px;line-height:2;margin:0}
+.d-p mark{background:#efe6d6;color:inherit;padding:0 2px}
+.d-q{margin:18px auto 0;max-width:340px;padding:12px 0 14px;border-bottom:1px solid #ddd;font-size:21px;color:#555}
+.d-q:before{content:'\201C';display:block;font-size:34px;line-height:1;color:#bbb;margin-bottom:2px}
+.toast{position:absolute;right:18px;bottom:18px;display:flex;align-items:center;gap:10px;padding:12px 18px 12px 12px;border-radius:999px;background:var(--ink);color:#fff;font-family:var(--sans);font-size:14px;font-weight:500;box-shadow:0 10px 30px rgba(28,35,27,.25);opacity:0;transform:translateY(16px)}
+.toast b{display:grid;place-items:center;width:26px;height:26px;border-radius:50%;background:var(--naver)}
+.replay{position:absolute;right:28px;top:22px;border:0;background:transparent;font:500 13px var(--sans);color:var(--ink-40);cursor:pointer;padding:6px 10px;border-radius:999px;opacity:0;transition:opacity .4s,color .2s,background .2s}
+.replay:hover{color:var(--ink);background:rgba(28,35,27,.05)}
+.rv{opacity:0}
+.rv.show{animation:rv .7s var(--ease) forwards}
+@keyframes rv{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+
+/* sections */
+section.s{width:min(1120px,calc(100% - 48px));margin:0 auto;padding:130px 0 0}
+.eyebrow{font-size:12px;font-weight:600;letter-spacing:.16em;color:var(--sage)}
+h2{margin:14px 0 0;font-weight:500;font-size:clamp(32px,4vw,56px);line-height:1.1;letter-spacing:-.04em}
+h2 em{font-style:normal;font-family:var(--serif);font-weight:600;font-size:.92em;color:var(--sage);letter-spacing:-.03em}
+.sub2{margin:16px 0 0;max-width:34rem;color:var(--ink-60);font-size:17px}
+.kwrow{display:flex;justify-content:space-between;align-items:end;gap:40px;flex-wrap:wrap}
+.kwform{display:flex;align-items:center;gap:6px;padding:6px 6px 6px 20px;border-radius:999px;background:#fff;box-shadow:inset 0 0 0 1px var(--line),0 4px 14px rgba(28,35,27,.05);width:min(380px,100%)}
+.kwform input{flex:1;min-width:0;border:0;outline:0;background:transparent;font:500 15.5px var(--sans);color:var(--ink);height:40px}
+.kwform button{width:42px;height:42px;border-radius:50%;border:0;background:var(--ink);color:#fff;display:grid;place-items:center;cursor:pointer;flex:none;transition:transform .2s var(--ease2)}
+.kwform button:hover{transform:translateX(2px)}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);margin-top:56px;border-top:1px solid var(--line)}
+.stat{padding:30px 0 0 0}
+.stat+.stat{padding-left:32px;border-left:1px solid var(--line)}
+.stat b{display:block;font-weight:400;font-size:clamp(44px,5.4vw,80px);line-height:1;letter-spacing:-.05em;font-variant-numeric:tabular-nums}
+.stat b small{font-size:.38em;letter-spacing:-.02em;margin-left:4px;color:var(--ink-60)}
+.stat span{display:block;margin-top:12px;font-size:14px;color:var(--ink-60)}
+.src{margin-top:22px;font-size:13px;color:var(--ink-40);min-height:20px}
+.src a{color:var(--ink-60)}
+.loading .stat b{opacity:.35}
+
+.steps{margin-top:56px;border-top:1px solid var(--line)}
+.step{display:grid;grid-template-columns:120px 1fr 1.2fr;gap:32px;align-items:center;padding:36px 0;border-bottom:1px solid var(--line)}
+.step .no{font-family:var(--serif);font-size:56px;line-height:1;color:var(--sage);letter-spacing:-.04em}
+.step h3{margin:0;font-weight:500;font-size:clamp(22px,2.2vw,30px);letter-spacing:-.035em}
+.step p{margin:0;color:var(--ink-60);font-size:16.5px;max-width:30rem}
+
+.end{width:min(1120px,calc(100% - 48px));margin:110px auto 0;border-radius:36px;background:#dfe8d9;color:var(--ink);text-align:center;padding:96px 24px 90px;position:relative;overflow:hidden}
+.end .lead{color:var(--ink-60)}
+footer{width:min(1120px,calc(100% - 48px));margin:0 auto;display:flex;gap:22px;flex-wrap:wrap;justify-content:space-between;padding:34px 0 46px;font-size:13px;color:var(--ink-40)}
+footer nav{display:flex;gap:18px}footer a{text-decoration:none}footer a:hover{color:var(--ink)}
+
+/* entrance */
+.in{opacity:0;transform:translateY(22px);filter:blur(8px);animation:in .9s var(--ease) forwards}
+@keyframes in{to{opacity:1;transform:none;filter:none}}
+.reveal{opacity:0;transform:translateY(28px);transition:opacity .8s var(--ease),transform .8s var(--ease)}
+.reveal.on{opacity:1;transform:none}
+
+@media (max-width:1100px){
+  .stage{grid-template-columns:1fr;justify-items:center;height:auto;padding:56px 20px 0}
+  .phone,.flow{display:none}
+  .paper{width:min(560px,100%)}
+  .mchips{display:flex!important}
+}
+.mchips{display:none;flex-wrap:wrap;gap:8px;justify-content:center;margin:0 0 18px}
+.mchips .chip{position:static;opacity:1;transform:none}
+@media (max-width:760px){
+  .nav .links a:not(.solid){display:none}
+  .hero{padding-top:120px}
+  h1 .ln{white-space:normal}
+  .stage{border-radius:28px;margin-top:48px}
+  .doc{padding:20px 22px 30px}
+  .d-strip{height:118px;margin:0 -4px 14px}
+  .bar .t{display:none}.bar{justify-content:space-between}
+  .paper{height:500px}
+  .d-title{font-size:18px}.d-p{font-size:14px;line-height:1.9}.d-q{font-size:17px;margin-top:12px}
+  .mchips{gap:6px;margin-bottom:14px}.mchips .chip{padding:7px 11px;font-size:12.5px}
+  .toast{left:50%;right:auto;transform:translate(-50%,16px);white-space:nowrap;font-size:13px}
+  .stats{grid-template-columns:1fr 1fr}
+  .stat:nth-child(3){padding-left:0;border-left:0}
+  .stat:nth-child(n+3){border-top:1px solid var(--line);margin-top:24px}
+  .step{grid-template-columns:1fr;gap:10px;padding:28px 0}
+  .step .no{font-size:40px}
+  .end{border-radius:28px;padding:72px 22px}
+  .btn{height:50px}
+}
+@media (prefers-reduced-motion:reduce){
+  *{animation:none!important;transition:none!important}
+  .in,.reveal,.rv,.chip,.toast{opacity:1!important;transform:none!important;filter:none!important}
+  .d-strip span{clip-path:none!important}
+}
 </style>
 </head>
 <body>
-<header class="top">
-  <a class="logo" href="/"><i><svg viewBox="0 0 48 48" aria-hidden="true"><path d="M24 40 V22" stroke="currentColor" stroke-width="3.5" stroke-linecap="round"/><path d="M24 28 C15 28 10 21 10 15 C18 15 24 21 24 28Z" fill="currentColor" opacity=".75"/><path d="M24 23 C25 14 32 8 39 8 C38 17 31 23 24 23Z" fill="currentColor"/></svg></i>후기씨앗</a>
-  <nav><a href="https://app.hugissiat.com">앱</a><a href="#loginBtns" class="on" id="topLogin">시작하기</a></nav>
+<div class="grain" aria-hidden="true"></div>
+
+<header class="nav in" style="animation-delay:0s">
+  <a class="mark" href="/" aria-label="후기씨앗 홈"><svg viewBox="0 0 48 48" aria-hidden="true"><path d="M24 41V23" stroke="currentColor" stroke-width="3.6" stroke-linecap="round"/><path d="M24 29c-9 0-14-7-14-13 8 0 14 6 14 13z" fill="currentColor" opacity=".7"/><path d="M24 24c1-9 8-15 15-15-1 9-8 15-15 15z" fill="currentColor"/></svg>후기씨앗</a>
+  <nav class="links"><a href="#how">사용법</a><a href="https://app.hugissiat.com">앱</a><a href="#start" class="solid" id="navCta">시작하기</a></nav>
 </header>
 
+<main>
 <section class="hero">
-  <div>
-    <h1>잘 뜨는 글 구성에<br><em>내 경험</em>을 담아요</h1>
-    <p>키워드 검색 상위 글의 구성을 읽어 오고, 색은 내 블로그에 맞춰요.<br>내용은 후기씨앗에 남긴 진짜 경험으로만 채워요.<br>네이버엔 임시저장까지만. 발행은 내가 확인하고 해요.</p>
-    <div class="btns" id="loginBtns"><a class="nbtn" href="/auth/naver/login" id="nLogin"><b>N</b>네이버로 시작하기</a><a class="gbtn" href="/auth/google/login" id="gLogin"><svg width="20" height="20" viewBox="0 0 48 48" aria-hidden="true"><path fill="#EA4335" d="M24 9.5c3.5 0 6.6 1.2 9.1 3.6l6.8-6.8C35.8 2.4 30.3 0 24 0 14.6 0 6.6 5.4 2.7 13.3l7.9 6.1C12.5 13.6 17.8 9.5 24 9.5z"/><path fill="#4285F4" d="M46.5 24.5c0-1.6-.1-3.1-.4-4.5H24v9h12.7c-.6 3-2.3 5.5-4.8 7.2l7.7 6c4.5-4.2 6.9-10.3 6.9-17.7z"/><path fill="#FBBC05" d="M10.6 28.6c-.5-1.4-.8-3-.8-4.6s.3-3.2.8-4.6l-7.9-6.1C1 16.6 0 20.2 0 24s1 7.4 2.7 10.7l7.9-6.1z"/><path fill="#34A853" d="M24 48c6.5 0 11.9-2.1 15.9-5.8l-7.7-6c-2.2 1.5-5 2.3-8.2 2.3-6.2 0-11.5-4.1-13.4-9.9l-7.9 6.1C6.6 42.6 14.6 48 24 48z"/></svg>구글로 시작하기</a></div>
-    <div class="sub2">쓰던 계정으로 바로 시작해요. 따로 가입은 없어요.</div>
-    <div class="msg" id="msg" hidden></div>
+  <div class="badge in" style="animation-delay:.1s"><b>BETA</b>네이버 임시저장까지 한 번에</div>
+  <h1><span class="ln in" style="animation-delay:.22s">잘 뜨는 구성에,</span><span class="ln in" style="animation-delay:.34s"><em>내 경험</em>만 담아요</span></h1>
+  <p class="lead in" style="animation-delay:.48s">네이버 검색 상위 글의 구성은 그대로, 내용은 내가 다녀온 기록으로. 색은 내 블로그에 맞추고, 발행은 내가 눌러요.</p>
+  <div class="cta in" id="start" style="animation-delay:.6s">
+    <a class="btn nv" href="/auth/naver/login" id="nLogin"><span class="n">N</span>네이버로 시작하기</a>
+    <a class="btn gg" href="/auth/google/login" id="gLogin"><svg width="19" height="19" viewBox="0 0 48 48" aria-hidden="true"><path fill="#EA4335" d="M24 9.5c3.5 0 6.6 1.2 9.1 3.6l6.8-6.8C35.8 2.4 30.3 0 24 0 14.6 0 6.6 5.4 2.7 13.3l7.9 6.1C12.5 13.6 17.8 9.5 24 9.5z"/><path fill="#4285F4" d="M46.5 24.5c0-1.6-.1-3.1-.4-4.5H24v9h12.7c-.6 3-2.3 5.5-4.8 7.2l7.7 6c4.5-4.2 6.9-10.3 6.9-17.7z"/><path fill="#FBBC05" d="M10.6 28.6c-.5-1.4-.8-3-.8-4.6s.3-3.2.8-4.6l-7.9-6.1C1 16.6 0 20.2 0 24s1 7.4 2.7 10.7l7.9-6.1z"/><path fill="#34A853" d="M24 48c6.5 0 11.9-2.1 15.9-5.8l-7.7-6c-2.2 1.5-5 2.3-8.2 2.3-6.2 0-11.5-4.1-13.4-9.9l-7.9 6.1C6.6 42.6 14.6 48 24 48z"/></svg>구글로 시작하기</a>
   </div>
-  <div class="mock"><div class="paper"><div class="doc-title">용산 한정식, 소담 엄마랑 조용히 먹은 정식</div><div class="se-viewer se-theme-default"><div class="se-main-container" id="mockDoc"></div></div></div></div>
-</section>
+  <div class="micro in" style="animation-delay:.7s">가입 없이 쓰던 계정으로 · 무료</div>
+  <div id="msgWrap"></div>
 
-<section class="sec">
-  <h2>이렇게 써요</h2>
-  <p class="lead">경험은 앱으로 모으고, 글은 내 블로그 결대로</p>
-  <div class="steps3">
-    <div class="st3"><b>1</b><h3>다녀와서 1분 기록</h3><p>후기씨앗 앱에서 질문에 톡톡 답하고 사진을 골라요. 내가 겪은 것만 모여요.</p></div>
-    <div class="st3"><b>2</b><h3>잘 뜨는 구성 읽기</h3><p>쓸 글 키워드를 넣으면 네이버 블로그 검색 상위 글의 사진 수·소제목·지도·글 길이를 읽어와요. 좋아하는 블로그 주소를 넣어도 돼요.</p></div>
-    <div class="st3"><b>3</b><h3>Aside가 임시저장</h3><p>고른 글 구성으로 스마트에디터에 글을 채워 임시저장해요. 확인하고 발행만 누르면 돼요.</p></div>
+  <div class="stage in" id="stage" style="animation-delay:.8s" aria-label="후기씨앗 기록이 블로그 글로 바뀌는 예시">
+    <span class="cap">다녀온 날의 기록 → 내 블로그 글</span>
+    <button class="replay" id="replay" type="button">다시 보기</button>
+    <div class="phone" aria-hidden="true"><div class="app">
+      <div class="hd"><svg viewBox="0 0 24 24" fill="none"><path d="M15 5l-7 7 7 7" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>소담 한정식</div>
+      <div class="pg">이전<i></i>건너뛰기</div>
+      <div class="qq">제일 좋았던 건?</div>
+      <div class="ops"><span class="on">보리굴비</span><span class="on">반찬</span><span>분위기</span><span>가격</span><span>주차</span></div>
+      <div class="memo"><b>현장 메모</b>엄마랑 둘이. 반찬만 12가지, 웨이팅 20분</div>
+      <div class="ph"><span></span><span></span><span></span></div>
+      <div class="nx">다음</div>
+    </div></div>
+    <div class="flow" aria-hidden="true">
+      <svg class="path" viewBox="0 0 300 300" preserveAspectRatio="none"><path d="M0 150 C 80 150, 60 30, 150 30 S 230 150, 300 150"/><path d="M0 150 C 80 150, 60 270, 150 270 S 230 150, 300 150"/></svg>
+      <span class="chip" style="top:120px" data-c="0"><i></i>엄마랑 <small>누구랑</small></span>
+      <span class="chip" style="top:190px" data-c="1"><i></i>보리굴비 꼭 <small>추천</small></span>
+      <span class="chip" style="top:260px" data-c="2"><i></i>반찬 12가지 <small>메모</small></span>
+      <span class="chip" style="top:330px" data-c="3"><i></i>웨이팅 20분 <small>아쉬운 점</small></span>
+    </div>
+    <div class="paper">
+      <div class="bar"><span class="dots"><i></i><i></i><i></i></span><span class="t">블로그 글쓰기</span><span class="kw">용산 한정식 · 상위 10개 글 구성</span></div>
+      <div class="doc">
+        <div class="mchips"><span class="chip"><i></i>엄마랑</span><span class="chip"><i></i>보리굴비 꼭</span><span class="chip"><i></i>반찬 12가지</span></div>
+        <div class="d-title"><span id="tt"></span><span class="caret"></span></div>
+        <div class="d-note rv" data-s="1">업체로부터 식사를 제공받아 직접 다녀와서 쓴 글이에요.</div>
+        <div class="d-strip" data-s="2"><span></span><span></span></div>
+        <p class="d-p rv" data-s="3">주말에 엄마 모시고 조용히 다녀왔어요.</p>
+        <p class="d-p rv" data-s="4">반찬만 <mark>열두 가지</mark>가 깔리더라고요.</p>
+        <div class="d-q rv" data-s="5">보리굴비는 꼭 시켜 보세요</div>
+      </div>
+      <div class="toast" id="toast"><b><svg width="15" height="15" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12.5l4.2 4.2L19 7" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg></b>네이버에 임시저장했어요</div>
+    </div>
   </div>
 </section>
 
-<section class="sec">
-  <h2>글 구성 고르기</h2>
-  <p class="lead">실제 블로거 후기 구조를 바탕으로 만든 틀이에요</p>
-  <div class="gal" id="gal"></div>
+<section class="s reveal" id="data">
+  <div class="kwrow">
+    <div>
+      <div class="eyebrow">잘 뜨는 구성</div>
+      <h2>상위 글은 <em>이렇게</em> 써요</h2>
+      <p class="sub2">쓸 글 키워드를 넣으면 네이버 블로그 검색 상위 10개 글을 읽어서 평균을 내요.</p>
+    </div>
+    <form class="kwform" id="kwForm"><input id="kw" value="맛집 후기" aria-label="키워드" autocomplete="off"><button aria-label="분석"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12h13m-5-6 6 6-6 6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></button></form>
+  </div>
+  <div class="stats" id="stats">
+    <div class="stat"><b data-k="img">20<small>장</small></b><span>글 하나 사진</span></div>
+    <div class="stat"><b data-k="chars">2,264<small>자</small></b><span>글 길이</span></div>
+    <div class="stat"><b data-k="subs">4<small>개</small></b><span>소제목·인용구</span></div>
+    <div class="stat"><b data-k="map">10<small>/10</small></b><span>지도 넣은 글</span></div>
+  </div>
+  <div class="src" id="src"></div>
 </section>
 
-<div class="cta"><div class="btns"><a class="nbtn" href="/auth/naver/login"><b>N</b>네이버로 시작하기</a><a class="gbtn" href="/auth/google/login"><svg width="20" height="20" viewBox="0 0 48 48" aria-hidden="true"><path fill="#EA4335" d="M24 9.5c3.5 0 6.6 1.2 9.1 3.6l6.8-6.8C35.8 2.4 30.3 0 24 0 14.6 0 6.6 5.4 2.7 13.3l7.9 6.1C12.5 13.6 17.8 9.5 24 9.5z"/><path fill="#4285F4" d="M46.5 24.5c0-1.6-.1-3.1-.4-4.5H24v9h12.7c-.6 3-2.3 5.5-4.8 7.2l7.7 6c4.5-4.2 6.9-10.3 6.9-17.7z"/><path fill="#FBBC05" d="M10.6 28.6c-.5-1.4-.8-3-.8-4.6s.3-3.2.8-4.6l-7.9-6.1C1 16.6 0 20.2 0 24s1 7.4 2.7 10.7l7.9-6.1z"/><path fill="#34A853" d="M24 48c6.5 0 11.9-2.1 15.9-5.8l-7.7-6c-2.2 1.5-5 2.3-8.2 2.3-6.2 0-11.5-4.1-13.4-9.9l-7.9 6.1C6.6 42.6 14.6 48 24 48z"/></svg>구글로 시작하기</a></div></div>
-<footer><span>© 2026 PortPapa</span><a href="/terms.html">이용약관</a><a href="/privacy.html">개인정보처리방침</a><a href="mailto:hello@hugissiat.com">문의</a></footer>
-<script src="/s/templates.js"></script>
+<section class="s reveal" id="how">
+  <div class="eyebrow">사용법</div>
+  <h2>다녀온 날 1분, <em>글은 내 결대로</em></h2>
+  <div class="steps">
+    <div class="step"><div class="no">01</div><h3>앱에서 질문에 톡톡</h3><p>누구랑, 뭐가 좋았는지, 아쉬운 점까지. 사진은 사진첩에서 고르기만 해요.</p></div>
+    <div class="step"><div class="no">02</div><h3>따라 할 구성 고르기</h3><p>키워드 상위 글이나 좋아하는 블로그를 고르면 사진 배치·소제목·글 길이를 맞춰요. 색은 내 블로그에서 뽑아요.</p></div>
+    <div class="step"><div class="no">03</div><h3>Aside가 임시저장</h3><p>스마트에디터에 글을 채워 임시저장까지만 해요. 읽어 보고 발행은 내가 눌러요.</p></div>
+  </div>
+</section>
+
+<section class="end reveal">
+  <h2>AI 글은 많아도,<br><em>내 경험</em>은 나만 써요</h2>
+  <p class="lead">쓰던 네이버·구글 계정으로 바로 시작해요.</p>
+  <div class="cta" id="cta2">
+    <a class="btn nv" href="/auth/naver/login"><span class="n">N</span>네이버로 시작하기</a>
+    <a class="btn gg" href="/auth/google/login">구글로 시작하기</a>
+  </div>
+</section>
+</main>
+
+<footer><span>© 2026 PortPapa · hello@hugissiat.com</span><nav><a href="https://app.hugissiat.com">앱</a><a href="/terms.html">이용약관</a><a href="/privacy.html">개인정보처리방침</a></nav></footer>
+
 <script>
-(async()=>{
-  const q=new URLSearchParams(location.search).get('login');
-  const m={need:'로그인하면 이어서 쓸 수 있어요.',fail:'로그인하지 못했어요. 다시 시도해 주세요.',cancel:'로그인을 취소했어요.'}[q];
-  if(m){const e=document.getElementById('msg');e.textContent=m;e.hidden=false}
-  try{const r=await fetch('/api/me');if(r.ok){const j=await r.json();['nLogin','topLogin'].forEach(id=>{const a=document.getElementById(id);a.href='/studio';});document.getElementById('nLogin').innerHTML='<b>N</b>'+(j.nickname?j.nickname+'님, ':'')+'이어서 하기';document.getElementById('topLogin').textContent='내 공간';const g=document.getElementById('gLogin');if(g)g.remove();}}catch(e){}
-  // 예시 미리보기 (맛집 기본형 앞부분)
-  const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
-  const ph=(l,w,h)=>'data:image/svg+xml;charset=utf-8,'+encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" width="${w}" height="${h}"><rect width="100%" height="100%" fill="#f3e3e8"/><text x="50%" y="52%" text-anchor="middle" font-family="sans-serif" font-size="26" fill="#9a8a90">${l}</text></svg>`);
-  const sp=t=>`<span class="se-fs-fs16 se-ff-nanummaruburi" style="color:#000">${esc(t)}</span>`;
-  const p=t=>`<p class="se-text-paragraph se-text-paragraph-align-center" style="line-height:2.0">${sp(t)}</p>`;
-  const html=[
-    `<div class="se-component se-text se-l-default"><div class="se-component-content"><div class="se-section se-section-text se-l-default"><div class="se-module se-module-text"><p class="se-text-paragraph se-text-paragraph-align-center"><span class="se-fs-fs13 se-ff-nanummaruburi" style="color:#888">이 글은 업체로부터 서비스를 제공받아 직접 경험하고 작성했어요.</span></p></div></div></div></div>`,
-    `<div class="se-component se-imageStrip se-imageStrip2 se-l-default"><div class="se-component-content se-component-content-extend"><div class="se-section se-section-imageStrip se-l-default"><div class="se-imageStrip-container se-imageStrip-col-2"><div class="se-module se-module-image" style="width:50%"><img class="se-image-resource" style="width:100%;display:block" src="${ph('한상 차림',400,300)}"></div><div class="se-module se-module-image" style="width:50%"><img class="se-image-resource" style="width:100%;display:block" src="${ph('반찬',400,300)}"></div></div></div></div></div>`,
-    `<div class="se-component se-text se-l-default"><div class="se-component-content"><div class="se-section se-section-text se-l-default"><div class="se-module se-module-text">${p('주말에 친정 엄마 모시고 다녀왔어요.')}${p('반찬이 열두 가지 넘게 깔렸어요.')}</div></div></div></div>`,
-    `<div class="se-component se-quotation se-l-quotation_underline"><div class="se-component-content"><div class="se-section se-section-quotation se-l-quotation_underline"><blockquote class="se-quotation-container"><div class="se-module se-module-text se-quote"><p class="se-text-paragraph"><span class="se-fs-fs24 se-ff-nanummaruburi">보리굴비는 꼭 시켜 보세요</span></p></div></blockquote></div></div></div>`
-  ].join('');
-  document.getElementById('mockDoc').innerHTML=html;
-  const lab={image:'사진',strip:'사진 묶음',text:'본문',sub:'소제목',quote:'강조 한 문장',line:'구분선',place:'장소 지도',info:'이용 정보',table:'표',sticker:'스티커',link:'상품 링크',notice:'대가 표기'};
-  document.getElementById('gal').innerHTML=window.HS_TEMPLATES.map(t=>{const seq=[];t.blocks.forEach(b=>{const n=lab[b.t];if(seq[seq.length-1]!==n)seq.push(n)});return `<div class="gc"><b>${esc(t.name)}</b><small>${esc(t.desc)}</small><ol>${seq.slice(0,7).map(s=>`<li>${s}</li>`).join('')}${seq.length>7?'<li>…</li>':''}</ol></div>`}).join('');
+(() => {
+  const $ = s => document.querySelector(s);
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  // 로그인 안내 메시지
+  const q = new URLSearchParams(location.search).get('login');
+  const m = { need: '로그인하면 이어서 쓸 수 있어요.', fail: '로그인하지 못했어요. 다시 시도해 주세요.', cancel: '로그인을 취소했어요.' }[q];
+  if (m) $('#msgWrap').innerHTML = '<div class="msg">' + m + '</div>';
+  // 로그인 상태면 이어서 하기
+  fetch('/api/me').then(r => r.ok ? r.json() : null).then(j => {
+    if (!j) return;
+    const go = '<a class="btn nv" href="/studio">' + (j.nickname ? j.nickname + '님, ' : '') + '이어서 하기<span class="arr"><svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M5 12h13m-5-6 6 6-6 6" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></span></a>';
+    $('#start').innerHTML = go; $('#cta2').innerHTML = go;
+    $('#navCta').textContent = '내 공간'; $('#navCta').href = '/studio';
+  }).catch(() => {});
+
+  // 시그니처: 기록이 글이 되는 장면
+  const TITLE = '용산 한정식, 엄마랑 조용히 먹은 보리굴비 정식';
+  const stage = $('#stage'), tt = $('#tt'), toast = $('#toast');
+  let timers = [];
+  const at = (ms, fn) => timers.push(setTimeout(fn, ms));
+  function reset() {
+    timers.forEach(clearTimeout); timers = [];
+    tt.textContent = '';
+    stage.querySelectorAll('.flow .chip').forEach(c => { c.style.transition = 'none'; c.style.opacity = 0; c.style.transform = 'translate(-30px,6px) scale(.96)'; });
+    stage.querySelectorAll('.rv').forEach(e => e.classList.remove('show'));
+    stage.querySelector('.d-strip').querySelectorAll('span').forEach(s => { s.style.transition = 'none'; s.style.clipPath = 'inset(0 0 100% 0)'; });
+    toast.style.transition = 'none'; toast.style.opacity = 0; toast.style.transform = innerWidth <= 760 ? 'translate(-50%,16px)' : 'translateY(16px)';
+    $('#replay').style.opacity = 0;
+  }
+  function finalState() {
+    tt.textContent = TITLE;
+    stage.querySelectorAll('.flow .chip').forEach(c => { c.style.opacity = 1; c.style.transform = 'none'; });
+    stage.querySelectorAll('.rv').forEach(e => { e.style.opacity = 1; e.classList.add('show'); });
+    stage.querySelectorAll('.d-strip span').forEach(s => s.style.clipPath = 'none');
+    toast.style.opacity = 1; toast.style.transform = innerWidth <= 760 ? 'translate(-50%,0)' : 'none';
+  }
+  function play() {
+    reset();
+    if (reduce) return finalState();
+    void stage.offsetWidth;
+    stage.classList.remove('drawn'); void stage.offsetWidth; stage.classList.add('drawn');
+    const chips = stage.querySelectorAll('.flow .chip');
+    chips.forEach((c, i) => at(200 + i * 260, () => { c.style.transition = 'opacity .6s var(--ease), transform .7s var(--ease)'; c.style.opacity = 1; c.style.transform = 'none'; }));
+    // 칩이 종이 쪽으로 흘러감
+
+    let t0 = 1500;
+    [...TITLE].forEach((ch, i) => at(t0 + i * 38, () => { tt.textContent += ch; }));
+    t0 += TITLE.length * 38 + 150;
+    const steps = [[1, 0], [2, 300], [3, 900], [4, 1250], [5, 1700]];
+    steps.forEach(([s, d]) => at(t0 + d, () => {
+      if (s === 2) stage.querySelectorAll('.d-strip span').forEach((sp, j) => { sp.style.transition = 'clip-path .9s var(--ease) ' + (j * .12) + 's'; sp.style.clipPath = 'inset(0 0 0 0)'; });
+      else stage.querySelector('[data-s="' + s + '"]').classList.add('show');
+    }));
+    at(t0 + 2500, () => { toast.style.transition = 'opacity .5s var(--ease), transform .6s var(--ease)'; toast.style.opacity = 1; toast.style.transform = innerWidth <= 760 ? 'translate(-50%,0)' : 'none'; });
+    at(t0 + 3300, () => { $('#replay').style.opacity = 1; });
+  }
+  $('#replay').onclick = play;
+  let played = false;
+  new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting && !played) { played = true; setTimeout(play, 700); } }), { threshold: .25 }).observe(stage);
+  setTimeout(() => { if (!played) { played = true; play(); } }, 2500);
+
+  // 스크롤 등장
+  const io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { e.target.classList.add('on'); io.unobserve(e.target); } }), { threshold: .15 });
+  document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+
+  // 상위 글 숫자 (실제 분석)
+  const fmt = n => n.toLocaleString('ko-KR');
+  function count(el, to, unit) {
+    const from = parseInt(el.textContent.replace(/\D/g, '')) || 0, t1 = performance.now(), d = reduce ? 0 : 900;
+    const step = now => { const p = d ? Math.min(1, (now - t1) / d) : 1, e = 1 - Math.pow(1 - p, 3), v = Math.round(from + (to - from) * e); el.innerHTML = fmt(v) + '<small>' + unit + '</small>'; if (p < 1) requestAnimationFrame(step); };
+    requestAnimationFrame(step);
+  }
+  async function load(kw) {
+    $('#stats').classList.add('loading'); $('#src').textContent = '“' + kw + '” 상위 글을 읽는 중… (처음 키워드는 20초쯤 걸려요)';
+    try {
+      const j = await (await fetch('/api/top?q=' + encodeURIComponent(kw))).json();
+      if (!j.ok || !j.posts.length) throw new Error(j.error || '분석할 글이 없어요');
+      const ps = j.posts, n = ps.length, avg = f => Math.round(ps.reduce((a, p) => a + f(p), 0) / n);
+      count($('[data-k=img]'), avg(p => p.images), '장');
+      count($('[data-k=chars]'), avg(p => p.textChars), '자');
+      count($('[data-k=subs]'), avg(p => Object.values(p.quoteStyles || {}).reduce((a, b) => a + b, 0) + ((p.comps || {}).sectionTitle || 0)), '개');
+      count($('[data-k=map]'), ps.filter(p => p.places).length, '/' + n);
+      const d = new Date(j.at);
+      $('#src').innerHTML = '“' + kw.replace(/[<>&]/g, '') + '” 네이버 블로그 검색 상위 ' + n + '개 글 평균 · ' + (d.getMonth() + 1) + '월 ' + d.getDate() + '일 기준';
+    } catch (e) { $('#src').textContent = e.message; }
+    $('#stats').classList.remove('loading');
+  }
+  $('#kwForm').onsubmit = e => { e.preventDefault(); const v = $('#kw').value.trim(); if (v.length >= 2) load(v); };
+  new IntersectionObserver((es, o) => es.forEach(e => { if (e.isIntersecting) { o.disconnect(); load('맛집 후기'); } }), { threshold: .2 }).observe($('#data'));
 })();
 </script>
 </body>
