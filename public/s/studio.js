@@ -318,7 +318,7 @@ async function loadMyColor(id, guess) {
     const base = j.ok ? pickPalette(j, cols) : { ...MILD, _src: 'mild' };
     const fromPosts = postPalette(a.posts);
     const colors = { ...base, ...fromPosts, _src: Object.keys(fromPosts).length ? 'posts' : base._src };
-    st.myBlog = id; st.palette = { v: 2, blog: id, name: a.name || (j.ok && j.name) || id, headImg: j.ok ? j.headImg : '', colors };
+    st.myBlog = id; st.palette = { v: 3, blog: id, name: a.name || (j.ok && j.name) || id, headImg: j.ok ? j.headImg : '', colors };
     Object.values(st.profiles).forEach(p => { if (p.design) Object.assign(p.design, paletteDesign()); });
     save(); changed(); toast(st.palette.colors._src === 'mild' ? '눈에 띄는 색이 없어 무난한 색으로 했어요' : '내 블로그 색을 맞췄어요');
   } catch (e) { if (guess) { renderMyColor(); return; } if ($('#myColor')) $('#myColor').innerHTML = '<div class="err">' + esc(e.message) + '</div>'; setTimeout(renderMyColor, 2500); }
@@ -529,7 +529,7 @@ fetch('/api/me').then(r => r.ok ? r.json() : null).then(j => {
   document.addEventListener('click', e => { if (!$('#acct').contains(e.target)) $('#acct').hidden = true; });
   $('#acctDel').onclick = async () => { if (!confirm('계정과 저장된 설정을 모두 지울까요? 되돌릴 수 없어요.')) return; await fetch('/api/me/delete', { method: 'POST' }); localStorage.removeItem(LS); localStorage.removeItem(LS + '-synced'); location.href = '/'; };
   fetch('/api/state').then(r => r.json()).then(x => { if (x.ok && x.state && x.state.profiles && !localStorage.getItem(LS + '-synced')) { st = { ...st, ...x.state }; localStorage.setItem(LS + '-synced', '1'); save(); setMode(st.mode || 'kw'); renderAll(); } });
-  if (st.palette && st.palette.v !== 2) st.palette = null;
+  if (st.palette && st.palette.v !== 3) st.palette = null;
   if (!st.palette && st.myBlog) loadMyColor(st.myBlog); else if (!st.palette && j.blogGuess) loadMyColor(j.blogGuess, true); else renderMyColor();
 }).catch(() => {});
 if (!st.blog) analyze('kw:맛집 후기');

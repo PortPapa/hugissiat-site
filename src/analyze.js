@@ -71,7 +71,7 @@ export function analyzeHtml(html) {
   for (const t of body.matchAll(/<table class="se-table-content"([^>]*)>([\s\S]*?)<\/table>/g)) {
     if (/border:\s*none/.test(t[1])) st.tableNoBorder++;
     const rows = t[2].split(/<tr class="se-tr">/).slice(1);
-    const bg = cell => ((/<td[^>]*background-color:\s*(#[0-9a-fA-F]{6})/.exec(cell) || [])[1] || '').toLowerCase();
+    const bg = cell => ((/^[^>]*background-color:\s*(#[0-9a-fA-F]{6})/.exec(cell) || [])[1] || '').toLowerCase();
     rows.forEach((r, i) => {
       const cells = r.split(/<td /).slice(1);
       if (!cells.length) return;
