@@ -1,0 +1,199 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>후기씨앗 - 내 경험으로 쓰는 블로그</title>
+<meta name="description" content="AI가 쓴 티 나는 글 말고, 내가 겪은 이야기로. 다녀온 날 1분, 질문에 답하면 블로그 글감이 정리돼요.">
+<meta property="og:title" content="후기씨앗 - 내 경험으로 쓰는 블로그">
+<meta property="og:description" content="AI 글은 많아도, 내 경험은 나만 써요.">
+<meta property="og:image" content="https://app.hugissiat.com/img/feature-1024x500.png">
+<meta property="og:url" content="https://app.hugissiat.com/">
+<meta name="theme-color" content="#6F8E6D">
+<link rel="icon" href="/img/icon-512.png">
+<link rel="preload" as="font" type="font/woff2" crossorigin href="https://cdn.jsdelivr.net/gh/projectnoonnu/2404@1.0/Freesentation-7Bold.woff2">
+<style>
+@font-face{font-family:'Freesentation';src:url('https://cdn.jsdelivr.net/gh/projectnoonnu/2404@1.0/Freesentation-4Regular.woff2') format('woff2');font-weight:400;font-display:swap}
+@font-face{font-family:'Freesentation';src:url('https://cdn.jsdelivr.net/gh/projectnoonnu/2404@1.0/Freesentation-6SemiBold.woff2') format('woff2');font-weight:600;font-display:swap}
+@font-face{font-family:'Freesentation';src:url('https://cdn.jsdelivr.net/gh/projectnoonnu/2404@1.0/Freesentation-8ExtraBold.woff2') format('woff2');font-weight:800;font-display:swap}
+:root{--sage:#6F8E6D;--sage-d:#4F6B4C;--ink:#2E3A2C;--sub:#7A7468;--blush:#F6E2E9;--petal:#EFA9C0;--bg:#FFF9F1;--line:#ECE4D6;--card:#fff}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;font-family:'Freesentation',-apple-system,'Apple SD Gothic Neo','Malgun Gothic',sans-serif;color:var(--ink);background:var(--bg);background-image:radial-gradient(#E9E0D0 1px,transparent 1px);background-size:22px 22px;-webkit-font-smoothing:antialiased;word-break:keep-all}
+a{color:inherit}
+.wrap{max-width:1080px;margin:0 auto;padding:0 22px}
+header{position:sticky;top:0;z-index:10;background:rgba(255,249,241,.86);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+header .wrap{display:flex;align-items:center;justify-content:space-between;height:64px}
+.logo{display:flex;align-items:center;gap:10px;font-weight:800;font-size:20px;text-decoration:none}
+.logo i{width:36px;height:36px;border-radius:50%;background:var(--blush);display:flex;align-items:center;justify-content:center;color:var(--sage)}
+.logo svg{width:22px;height:22px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;height:52px;padding:0 24px;border-radius:26px;background:var(--sage);color:#fff;font-weight:700;font-size:16px;text-decoration:none;border:0;transition:background .15s}
+.btn:hover{background:var(--sage-d)}
+.btn.ghost{background:var(--card);color:var(--ink);border:1px solid var(--line)}
+.btn.sm{height:40px;padding:0 18px;font-size:14.5px}
+.hero{display:grid;grid-template-columns:1.05fr .95fr;gap:40px;align-items:center;padding:72px 0 40px}
+.hero h1{font-size:52px;line-height:1.18;letter-spacing:-1.5px;margin:0;font-weight:800}
+.hero h1 em{font-style:normal;color:var(--sage)}
+.hero p{font-size:19px;line-height:1.6;color:var(--sub);margin:20px 0 30px}
+.cta{display:flex;gap:10px;flex-wrap:wrap}
+.note{font-size:13.5px;color:var(--sub);margin-top:14px}
+.shot{position:relative;overflow:hidden;border-radius:8.76% 8.76% 0 0/5.54% 5.54% 0 0;aspect-ratio:822/1300;-webkit-mask-image:linear-gradient(180deg,#000 82%,transparent);mask-image:linear-gradient(180deg,#000 82%,transparent)}
+.shot img{width:100%;display:block}
+.hero .shot{max-width:380px;justify-self:center;width:100%}
+section{padding:64px 0}
+.h2{font-size:34px;letter-spacing:-1px;margin:0 0 10px;font-weight:800;text-align:center}
+.lead{font-size:17px;color:var(--sub);text-align:center;margin:0 0 40px}
+.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.step{background:var(--card);border:1px solid var(--line);border-radius:22px;padding:26px 24px}
+.step b{display:inline-flex;width:32px;height:32px;border-radius:50%;background:var(--blush);color:var(--sage-d);align-items:center;justify-content:center;font-size:15px;margin-bottom:14px}
+.step h3{margin:0 0 8px;font-size:20px}
+.step p{margin:0;color:var(--sub);line-height:1.55;font-size:15.5px}
+.feats{display:grid;gap:56px}
+.feat{display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:center}
+.feat:nth-child(even) .txt{order:2}
+.feat .txt h3{font-size:30px;letter-spacing:-.8px;margin:0 0 12px;line-height:1.3}
+.feat .txt p{font-size:17px;color:var(--sub);line-height:1.65;margin:0}
+.feat .txt ul{margin:16px 0 0;padding:0;list-style:none;display:grid;gap:8px}
+.feat .txt li{font-size:15.5px;padding-left:22px;position:relative}
+.feat .txt li::before{content:'';position:absolute;left:2px;top:7px;width:10px;height:10px;border-radius:50%;background:var(--petal)}
+.feat .shot{max-width:340px;width:100%;justify-self:center}
+.tester{background:var(--card);border:1px solid var(--line);border-radius:28px;padding:44px 32px;text-align:center}
+.tester .h2{margin-bottom:12px}
+.tl{display:flex;justify-content:center;gap:12px;flex-wrap:wrap;margin:26px 0 30px}
+.tl div{background:var(--bg);border:1px solid var(--line);border-radius:16px;padding:14px 18px;font-size:15px;min-width:150px}
+.tl div b{display:block;font-size:22px;color:var(--sage-d);margin-bottom:2px}
+.trust{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin-top:36px}
+.trust span{background:var(--card);border:1px solid var(--line);border-radius:999px;padding:8px 16px;font-size:14.5px}
+[hidden]{display:none!important}
+.tform{display:grid;gap:10px;max-width:420px;margin:0 auto;text-align:left}
+.tform input[type=text],.tform input[type=email]{height:52px;border-radius:14px;border:1px solid var(--line);background:var(--bg);padding:0 16px;font:inherit;font-size:16px;color:var(--ink)}
+.tform input:focus{outline:2px solid var(--sage);outline-offset:1px}
+.tform .hp{position:absolute;left:-9999px;width:1px;height:1px}
+.agree{display:flex;gap:8px;align-items:flex-start;font-size:13.5px;color:var(--sub);line-height:1.5}.agree input{margin-top:3px;accent-color:var(--sage)}.agree a{color:var(--sage-d)}
+.tform .btn{width:100%;margin-top:4px}
+.terr{color:#D9534F;font-size:14px;font-weight:600;min-height:1em;text-align:center}
+.tdone{max-width:440px;margin:0 auto;display:grid;gap:10px;text-align:left}
+.tdone-h{text-align:center;font-size:18px;margin-bottom:4px}
+.tstep{display:flex;gap:14px;align-items:center;background:var(--bg);border:1px solid var(--line);border-radius:16px;padding:14px 16px;text-decoration:none;color:var(--ink)}
+.tstep i{flex:none;width:32px;height:32px;border-radius:50%;background:var(--sage);color:#fff;font-style:normal;font-weight:800;display:flex;align-items:center;justify-content:center}
+.tstep span{display:grid;gap:2px}.tstep small{color:var(--sub);font-size:13.5px;line-height:1.45}
+.tstep.off{opacity:.45;pointer-events:none}.tstep.off i{background:#B9B3A8}
+footer{border-top:1px solid var(--line);padding:30px 0 40px;color:var(--sub);font-size:14px}
+footer .wrap{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
+footer a{text-decoration:none;margin-right:16px}
+@media (max-width:820px){
+  .hero{grid-template-columns:1fr;padding:44px 0 20px;text-align:center}
+  .hero h1{font-size:36px}
+  .hero p{font-size:17px}
+  .cta{justify-content:center}
+  .hero .shot{max-width:300px}
+  .steps{grid-template-columns:1fr}
+  .feat{grid-template-columns:1fr;gap:24px;text-align:center}
+  .feat:nth-child(even) .txt{order:0}
+  .feat .txt ul{justify-items:center}
+  .feat .shot{max-width:290px}
+  .h2{font-size:28px}
+  section{padding:48px 0}
+  header .btn.sm{display:none}
+  .tl{flex-wrap:nowrap;gap:8px}.tl div{min-width:0;flex:1;padding:12px 6px;font-size:13.5px}.tl div b{font-size:19px}
+}
+</style>
+</head>
+<body>
+<header><div class="wrap">
+  <a class="logo" href="/"><i><svg viewBox="0 0 48 48" aria-hidden="true"><path d="M24 40 V22" stroke="currentColor" stroke-width="3.5" stroke-linecap="round"/><path d="M24 28 C15 28 10 21 10 15 C18 15 24 21 24 28Z" fill="currentColor" opacity=".75"/><path d="M24 23 C25 14 32 8 39 8 C38 17 31 23 24 23Z" fill="currentColor"/></svg></i>후기씨앗</a>
+  <a class="btn sm" href="#tester">테스터 신청</a>
+</div></header>
+
+<main>
+<div class="wrap">
+  <div class="hero">
+    <div>
+      <h1>AI 글은 많아도,<br>내 경험은<br><em>나만</em> 써요</h1>
+      <p>다녀온 날 1분, 질문에 톡톡 답하면<br>블로그에 쓸 내 이야기가 정리돼요.</p>
+      <div class="cta"><a class="btn" href="#tester">테스터 신청하기</a><a class="btn ghost" href="#how">어떻게 쓰나요?</a></div>
+      <div class="note">안드로이드 · 무료 · 회원가입 없음</div>
+    </div>
+    <div class="shot"><img src="/img/phone-1.webp" alt="후기씨앗 홈 화면: 마감 임박, 최근 기록, 갈 곳 목록"></div>
+  </div>
+</div>
+
+<section id="how"><div class="wrap">
+  <h2 class="h2">이렇게 써요</h2>
+  <p class="lead">링크 하나로 시작해서, 답하고, 보내면 끝</p>
+  <div class="steps">
+    <div class="step"><b>1</b><h3>링크 공유</h3><p>네이버 지도에서 가게를, 스마트스토어·쿠팡에서 제품을 공유하면 정보가 알아서 들어와요.</p></div>
+    <div class="step"><b>2</b><h3>질문에 톡톡</h3><p>누구랑, 주차, 붐빔, 맛, 아쉬운 점까지. 고르기만 하면 되고, 모르는 건 건너뛰어요.</p></div>
+    <div class="step"><b>3</b><h3>보내기</h3><p>정리된 MD와 사진을 카톡·메일로 보내거나 구글 드라이브에 가게별 폴더로 저장해요.</p></div>
+  </div>
+</div></section>
+
+<section><div class="wrap feats">
+  <div class="feat">
+    <div class="txt"><h3>자주 가는 사람은<br>한 번에 골라요</h3><p>"우리 가족", "아이랑 둘이"처럼 조합을 저장해 두면 다음부터 한 번 누르고 바로 다음 질문으로 넘어가요.</p>
+      <ul><li>방문 시간대는 일정에서 알아서 골라요</li><li>현장에선 꾹 눌러 말로 메모</li></ul></div>
+    <div class="shot"><img src="/img/phone-2.webp" alt="누구랑 갔어요? 저장한 조합 선택 화면" loading="lazy"></div>
+  </div>
+  <div class="feat">
+    <div class="txt"><h3>별점과 느낌도<br>손끝으로 쓱</h3><p>맛·양·친절·청결을 0.5점 단위로 남기고, 느낌은 칩으로 골라요. 글로 다 쓰지 않아도 후기 재료가 쌓여요.</p></div>
+    <div class="shot"><img src="/img/phone-3.webp" alt="항목별 별점 입력 화면" loading="lazy"></div>
+  </div>
+  <div class="feat">
+    <div class="txt"><h3>체험단 일정과 마감,<br>놓치지 않게</h3><p>갈 곳은 달력에 플랫폼 색으로, 할 일은 마감이 가까운 순서로 보여요. 다녀온 뒤와 마감 전날엔 알림이 와요.</p>
+      <ul><li>방문 → 기록 → 블로그 발행까지 한눈에</li><li>마감보다 늦은 방문은 바로 표시</li></ul></div>
+    <div class="shot"><img src="/img/phone-5.webp" alt="갈 곳 달력 화면" loading="lazy"></div>
+  </div>
+  <div class="feat">
+    <div class="txt"><h3>완성하면<br>바로 보내기</h3><p>내가 겪은 것만 MD 파일로 정리돼요. AI로 글을 다듬어도 내용은 내 경험 그대로예요. 사진과 함께 보내고, 드라이브에 저장할 땐 진행률도 보여요.</p></div>
+    <div class="shot"><img src="/img/phone-4.webp" alt="완성 화면: 보내기, 복사하기, 드라이브에 저장" loading="lazy"></div>
+  </div>
+</div></section>
+
+<section id="tester"><div class="wrap">
+  <div class="tester">
+    <h2 class="h2">테스터를 모집해요</h2>
+    <p class="lead" style="margin-bottom:0">플레이 스토어 정식 출시 전, 먼저 써보고 의견을 들려주세요.</p>
+    <div class="tl"><div><b>12명</b>모집</div><div><b>14일</b>설치 유지</div><div><b>무료</b>안드로이드</div></div>
+    <form id="tform" class="tform" novalidate>
+      <input name="name" type="text" placeholder="이름 (닉네임도 괜찮아요)" autocomplete="name" required>
+      <input name="email" type="email" placeholder="플레이 스토어에서 쓰는 구글 메일" autocomplete="email" required>
+      <input name="website" type="text" tabindex="-1" autocomplete="off" class="hp" aria-hidden="true">
+      <label class="agree"><input type="checkbox" name="agree"> 테스트 안내를 위해 이름과 이메일을 받는 데 동의해요 <a href="/privacy.html#tester" target="_blank">자세히</a></label>
+      <button class="btn" type="submit">테스터 신청하기</button>
+      <div class="terr" id="terr"></div>
+    </form>
+    <div id="tdone" class="tdone" hidden>
+      <b class="tdone-h">신청됐어요! 아래 순서대로 해주세요</b>
+      <a class="tstep" id="s1" target="_blank" rel="noopener"><i>1</i><span><b>테스터 그룹 가입</b><small>신청한 구글 계정으로 "그룹 가입"을 눌러요. 이때 테스터로 등록돼요.</small></span></a>
+      <a class="tstep" id="s2" target="_blank" rel="noopener"><i>2</i><span><b>테스트 참여하기</b><small>"테스터 되기"를 눌러요.</small></span></a>
+      <a class="tstep" id="s3" target="_blank" rel="noopener"><i>3</i><span><b>플레이 스토어에서 설치</b><small>설치 후 14일 동안 지우지 말아 주세요.</small></span></a>
+      <div class="note" id="tnote"></div>
+    </div>
+  </div>
+  <div class="trust"><span>회원가입 없음</span><span>기록은 내 폰과 내 구글 드라이브에만</span><span>광고 없음</span></div>
+</div></section>
+</main>
+
+<footer><div class="wrap">
+  <div><a href="/privacy.html">개인정보처리방침</a><a href="mailto:hello@hugissiat.com">문의</a></div>
+  <div>© 2026 PortPapa</div>
+</div></footer>
+<script>
+(()=>{const OPEN=false;const f=document.getElementById('tform');if(!f)return;const err=document.getElementById('terr');
+f.addEventListener('submit',async e=>{e.preventDefault();err.textContent='';const fd=new FormData(f);
+  const o={name:fd.get('name'),email:fd.get('email'),website:fd.get('website'),agree:!!fd.get('agree')};
+  if(!String(o.name).trim()){err.textContent='이름을 적어주세요';return}
+  if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(o.email).trim())){err.textContent='이메일 주소를 확인해 주세요';return}
+  if(!o.agree){err.textContent='개인정보 수집에 동의해 주세요';return}
+  const btn=f.querySelector('button');btn.disabled=true;btn.textContent='신청하는 중…';
+  try{const r=await fetch('/api/tester',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify(o)});const j=await r.json();
+    if(!j.ok){err.textContent=j.error||'신청하지 못했어요';btn.disabled=false;btn.textContent='테스터 신청하기';return}
+    document.getElementById('s1').href=j.group;document.getElementById('s2').href=j.optin;document.getElementById('s3').href=j.store;
+    if(!OPEN){document.getElementById('s2').classList.add('off');document.getElementById('s3').classList.add('off');document.getElementById('tnote').textContent='지금은 구글 검토 중이라 1번만 해두시면 돼요. 2·3번이 열리면 메일로 알려드릴게요.'}
+    else document.getElementById('tnote').textContent=j.again?'이미 신청하셨어요. 위 순서만 다시 확인해 주세요.':'';
+    f.hidden=true;document.getElementById('tdone').hidden=false;
+  }catch(x){err.textContent='인터넷 연결을 확인해 주세요';btn.disabled=false;btn.textContent='테스터 신청하기'}});
+})();
+</script>
+</body>
+</html>
