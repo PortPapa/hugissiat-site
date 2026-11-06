@@ -1,0 +1,55 @@
+/* 스튜디오 v2: 설정 한 칸 + 미리보기 */
+.studio.v2{display:grid;grid-template-columns:400px minmax(0,1fr);gap:28px;max-width:1180px;margin:0 auto;padding:24px 20px 80px;align-items:start}
+.v2 .panel{position:sticky;top:76px;max-height:calc(100vh - 92px);overflow:auto;scrollbar-width:thin;background:#fff;border:1px solid var(--line);border-radius:22px;padding:8px 18px 22px}
+.v2 .steps{position:sticky;top:0;z-index:2;display:grid;grid-template-columns:repeat(4,1fr);gap:4px;margin:0 -10px 14px;padding:10px 10px 10px;background:#fff;border-bottom:1px solid var(--line)}
+.v2 .steps button{display:flex;align-items:center;justify-content:center;gap:6px;height:40px;border:0;border-radius:12px;background:transparent;font:inherit;font-size:14.5px;font-weight:600;color:var(--sub);cursor:pointer}
+.v2 .steps button b{display:grid;place-items:center;width:20px;height:20px;border-radius:50%;background:var(--bg);font-size:11.5px;color:var(--sub)}
+.v2 .steps button.on{background:var(--sage-s);color:var(--sage-d)}
+.v2 .steps button.on b{background:var(--sage);color:#fff}
+.v2 .ph{font-weight:800;font-size:17px;margin:4px 0 12px;display:flex;align-items:center;gap:8px}
+.v2 .ph.sm{font-size:15px;margin-top:22px}
+.v2 .ph .from{font-size:12px;font-weight:600;color:var(--sage-d);background:var(--sage-s);border-radius:999px;padding:3px 9px}
+.v2 .next{display:block;width:100%;height:46px;margin-top:20px;border:0;border-radius:14px;background:var(--ink);color:#fff;font:inherit;font-weight:700;font-size:15px;cursor:pointer}
+.v2 .posts{max-height:none}
+.v2 .ana details{margin-top:8px}.v2 .ana summary{cursor:pointer;font-size:13px;color:var(--sub);padding:6px 0}
+
+/* 디자인 목록 */
+.dgrp{margin:0 0 6px}
+.dgrp>.gt{font-size:12px;font-weight:700;color:var(--sub);letter-spacing:.04em;margin:16px 0 4px}
+.opt{display:flex;align-items:center;gap:10px;width:100%;min-height:50px;padding:0 4px;border:0;border-bottom:1px solid var(--line);background:transparent;font:inherit;text-align:left;cursor:pointer;color:var(--ink)}
+.opt>span{flex:1;font-size:15px;font-weight:600}
+.opt>em{font-style:normal;font-size:14px;color:var(--sub);display:inline-flex;align-items:center;gap:6px;max-width:58%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.opt>em i{width:16px;height:16px;border-radius:50%;border:1px solid rgba(0,0,0,.1);flex:none}
+.opt>svg{width:16px;height:16px;color:#b5ad9f;transition:transform .2s;flex:none}
+.opt.open>svg{transform:rotate(90deg)}
+.opt.open{border-bottom-color:transparent}
+.pick{padding:6px 0 16px;border-bottom:1px solid var(--line)}
+.pick .seg button{padding:8px 12px;font-size:13.5px}
+.pick .row{margin:0}
+.qgrid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.qgrid button{border:1px solid var(--line);background:#fff;border-radius:12px;padding:8px 10px 6px;cursor:pointer;text-align:left;overflow:hidden;min-height:84px}
+.qgrid button.on{border-color:var(--sage);box-shadow:0 0 0 2px var(--sage) inset}
+.qgrid .t{font-size:12px;color:var(--sub);font-weight:600;margin-bottom:2px}
+.qgrid .pv{pointer-events:none;transform:scale(.62);transform-origin:left top;width:161%;margin-bottom:-28%}
+.flist{display:grid;gap:4px}
+.flist button{border:1px solid var(--line);background:#fff;border-radius:10px;padding:10px 12px;text-align:left;cursor:pointer;font-size:15.5px;color:#222}
+.flist button.on{border-color:var(--sage);box-shadow:0 0 0 2px var(--sage) inset}
+.pick textarea{width:100%;border:1px solid var(--line);border-radius:10px;padding:10px 12px;font:inherit;font-size:14px;min-height:64px;resize:vertical;background:var(--bg)}
+.v2 .mycolor{margin:4px 0 0}
+
+/* 미리보기 */
+.v2 .preview{min-width:0}
+.v2 .pv-top{display:flex;justify-content:flex-end;margin:0 0 12px}
+.vseg{display:inline-flex;padding:3px;border-radius:999px;background:#fff;border:1px solid var(--line)}
+.vseg button{border:0;background:transparent;border-radius:999px;height:32px;padding:0 14px;font:inherit;font-size:13.5px;font-weight:600;color:var(--sub);cursor:pointer}
+.vseg button.on{background:var(--ink);color:#fff}
+.v2 .paper{border-radius:18px;box-shadow:0 1px 2px rgba(0,0,0,.04),0 12px 40px rgba(46,58,44,.08);border:1px solid #eee}
+.v2 .paper.no-src .src{display:none}
+.v2 .paper .se-component{cursor:pointer;border-radius:6px;transition:box-shadow .15s}
+.v2 .paper .se-component:hover{box-shadow:0 0 0 2px rgba(111,142,109,.35)}
+
+@media (max-width:900px){
+  .studio.v2{grid-template-columns:1fr;padding:14px 12px 60px}
+  .v2 .panel{position:static;max-height:none}
+  .v2 .paper.mobile{max-width:100%}
+}

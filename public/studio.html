@@ -17,19 +17,27 @@
 <link rel="stylesheet" href="https://hangeul.pstatic.net/hangeul_static/css/nanum-barun-gothic.css">
 <link rel="stylesheet" href="https://hangeul.pstatic.net/hangeul_static/css/nanum-square.css">
 <link rel="stylesheet" href="/s/studio.css">
+<link rel="stylesheet" href="/s/studio2.css">
 </head>
 <body>
 <header class="top">
   <a class="logo" href="/"><i><svg viewBox="0 0 48 48" aria-hidden="true"><path d="M24 40 V22" stroke="currentColor" stroke-width="3.5" stroke-linecap="round"/><path d="M24 28 C15 28 10 21 10 15 C18 15 24 21 24 28Z" fill="currentColor" opacity=".75"/><path d="M24 23 C25 14 32 8 39 8 C38 17 31 23 24 23Z" fill="currentColor"/></svg></i>후기씨앗</a>
-  <nav><a href="#studio" class="on">글쓰기 설정</a><a href="https://app.hugissiat.com">앱</a><button type="button" id="me" class="me" hidden></button></nav>
+  <nav><a href="https://app.hugissiat.com">앱</a><button type="button" id="me" class="me" hidden></button></nav>
 </header>
 
 
 
-<main id="studio" class="studio">
-  <aside class="left">
-    <div class="card">
-      <div class="h">따라 할 글 서식</div>
+<main id="studio" class="studio v2">
+  <aside class="panel">
+    <nav class="steps" id="steps">
+      <button type="button" data-step="src" class="on"><b>1</b>서식</button>
+      <button type="button" data-step="tpl"><b>2</b>구성</button>
+      <button type="button" data-step="design"><b>3</b>디자인</button>
+      <button type="button" data-step="out"><b>4</b>저장</button>
+    </nav>
+
+    <section class="pane" data-pane="src">
+      <div class="ph">따라 할 글 서식</div>
       <div class="srcTabs"><button type="button" data-m="kw" class="on">잘 뜨는 글</button><button type="button" data-m="blog">블로그 주소</button></div>
       <form class="blog-in" id="kwForm"><input id="kw" placeholder="쓸 글 키워드 (예: 양주 막국수)" autocomplete="off"><button type="submit">분석</button></form>
       <div class="chips" id="kwChips"></div>
@@ -37,41 +45,37 @@
       <label class="chk" id="reviewWrap" hidden><input type="checkbox" id="reviewOnly" checked> 사진 많은 후기 글만</label>
       <div class="blogs" id="blogs"></div>
       <div id="anaBox" class="ana"></div>
-    </div>
-    <div class="card">
-      <div class="h">글 구성</div>
+      <button type="button" class="next" data-go="tpl">다음: 글 구성</button>
+    </section>
+
+    <section class="pane" data-pane="tpl" hidden>
+      <div class="ph">글 구성</div>
       <div id="tpls" class="tpls"></div>
-    </div>
-  </aside>
+      <button type="button" class="next" data-go="design">다음: 디자인</button>
+    </section>
 
-  <section class="center">
-    <div class="se-bar" id="seBar"></div>
-    <div class="paper-wrap">
-      <div class="paper-tools"><button type="button" id="viewMobile" class="on">모바일</button><button type="button" id="viewPc">PC</button><label class="chk sm"><input type="checkbox" id="showSrc" checked> 경험 기록 연결 보기</label></div>
-      <div class="paper" id="paper">
-        <div class="doc-title" id="docTitle"></div>
-        <div class="se-viewer se-theme-default" lang="ko-KR"><div class="se-main-container" id="doc"></div></div>
-      </div>
-    </div>
-  </section>
-
-  <aside class="right">
-    <div class="card">
-      <div class="h">디자인 결 <span class="from" id="designFrom"></span></div>
-      <div class="mycolor" id="myColor"></div>
+    <section class="pane" data-pane="design" hidden>
+      <div class="ph">디자인 <span class="from" id="designFrom"></span></div>
       <div id="design"></div>
-    </div>
-    <div class="card" id="toneCard" hidden>
-      <div class="h">말투</div>
-      <div id="tone"></div>
-    </div>
-    <div class="card out">
-      <div class="h">내 글쓰기 설정</div>
-      <p class="mut">Aside 스킬이 이 설정과 후기씨앗 경험 기록으로 글을 써서 네이버에 임시저장해요.</p>
+      <button type="button" class="next" data-go="out">다음: 저장</button>
+    </section>
+
+    <section class="pane" data-pane="out" hidden>
+      <div class="ph">내 글쓰기 설정</div>
+      <p class="mut">Aside가 이 설정과 후기씨앗 경험 기록으로 글을 써서 네이버에 임시저장해요.</p>
       <button type="button" class="btn" id="dl">설정 파일 받기</button>
       <button type="button" class="btn ghost" id="cp">복사하기</button>
-    </div>
+      <div id="toneCard" hidden><div class="ph sm">말투</div><div id="tone"></div></div>
+    </section>
   </aside>
+
+  <section class="preview">
+    <div class="pv-top"><div class="vseg"><button type="button" id="viewMobile" class="on">모바일</button><button type="button" id="viewPc">PC</button></div></div>
+    <div class="paper mobile no-src" id="paper">
+      <div class="doc-title" id="docTitle"></div>
+      <div class="se-viewer se-theme-default" lang="ko-KR"><div class="se-main-container" id="doc"></div></div>
+    </div>
+  </section>
 </main>
 
 <div class="pop" id="pop" hidden></div>

@@ -73,7 +73,7 @@ h1 em{font-style:normal;font-family:var(--serif);font-weight:600;font-size:.9em;
 .ed-top .save.press{background:#f3f5f3;transform:scale(.96)}
 .ed-top .pub{height:34px;padding:0 16px;border-radius:8px;background:var(--naver);color:#fff;font:600 14px var(--sans);display:grid;place-items:center}
 .ed-tools{display:flex;align-items:center;gap:20px;height:46px;padding:0 20px;border-bottom:1px solid #eef0ee;flex:none;color:#9aa09a}
-.ed-tools svg{width:20px;height:20px}
+.ed-tools .set{font:500 12.5px var(--sans);color:#7b807b;padding:5px 10px;border-radius:999px;background:#f4f5f3}
 .ed-tools .kw{margin-left:auto;padding:5px 11px;border-radius:999px;background:var(--sage-soft);color:var(--sage);font:600 12px var(--sans)}
 .ed-body{flex:1;padding:22px 0 0 170px;overflow:hidden}
 .doc{width:440px;margin:0 auto;font-family:var(--serif);text-align:center;color:#222}
@@ -133,6 +133,25 @@ h1 em{font-style:normal;font-family:var(--serif);font-weight:600;font-size:.9em;
 .replay{position:absolute;left:28px;bottom:22px;z-index:9;border:0;background:rgba(255,255,255,.7);font:500 13px var(--sans);color:var(--ink-60);cursor:pointer;height:34px;padding:0 14px;border-radius:999px;opacity:0;transition:opacity .4s,color .2s,background .2s;box-shadow:inset 0 0 0 1px var(--line)}
 .replay.show{opacity:1}.replay:hover{color:var(--ink);background:#fff}
 
+.btn.go{background:var(--ink);color:#fff;padding:0 14px 0 26px;box-shadow:0 6px 18px rgba(28,35,27,.18)}
+.btn.go:hover{background:#2c362a}
+.lm{position:fixed;inset:0;z-index:100;display:grid;place-items:center;padding:20px}
+.lm[hidden]{display:none}
+.lm-bg{position:absolute;inset:0;background:rgba(28,35,27,.38);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);animation:fadeIn .25s var(--ease2)}
+.lm-box{outline:0;position:relative;width:min(380px,100%);background:#fffdf8;border-radius:28px;padding:34px 26px 22px;text-align:center;box-shadow:0 30px 80px rgba(28,35,27,.25);animation:pop .4s var(--ease)}
+@keyframes fadeIn{from{opacity:0}}
+@keyframes pop{from{opacity:0;transform:translateY(14px) scale(.98)}}
+.lm-x{position:absolute;right:14px;top:14px;width:36px;height:36px;border-radius:50%;border:0;background:transparent;color:var(--ink-60);cursor:pointer;display:grid;place-items:center}
+.lm-x:hover{background:rgba(28,35,27,.06)}
+.lm-mark{width:52px;height:52px;margin:0 auto 14px;border-radius:16px;background:var(--sage-soft);display:grid;place-items:center;color:var(--sage)}.lm-mark svg{width:28px;height:28px}
+.lm-t{font-size:22px;font-weight:600;letter-spacing:-.03em}
+.lm-s{margin:6px 0 22px;font-size:14.5px;color:var(--ink-60)}
+.lb{display:flex;align-items:center;justify-content:center;gap:10px;height:52px;border-radius:14px;font-size:15.5px;font-weight:600;text-decoration:none;margin-top:8px;transition:transform .15s var(--ease2),box-shadow .2s}
+.lb:active{transform:scale(.98)}
+.lb.nv{background:var(--naver);color:#fff}.lb.nv .n{font:900 17px/1 Arial,sans-serif}
+.lb.gg{background:#fff;color:#1f1f1f;box-shadow:inset 0 0 0 1px rgba(28,35,27,.16)}
+.lm-f{margin:18px 0 0;font-size:12px;color:var(--ink-40);line-height:1.5}.lm-f a{color:var(--ink-60)}
+
 /* sections */
 section.s{width:min(1120px,calc(100% - 48px));margin:0 auto;padding:130px 0 0}
 .eyebrow{font-size:12px;font-weight:600;letter-spacing:.16em;color:var(--sage)}
@@ -184,7 +203,7 @@ footer nav{display:flex;gap:18px}footer a{text-decoration:none}footer a:hover{co
   .stage{border-radius:28px;margin-top:48px}
   .stage{height:548px}
   .ed{left:14px;right:14px;top:58px}
-  .ed-tools{gap:16px;padding:0 14px}.ed-tools svg:nth-child(n+5){display:none}.ed-tools .kw{display:none}
+  .ed-tools{gap:6px;padding:0 12px}.ed-tools .set:nth-child(3){display:none}.ed-tools .kw{display:none}
   .ed-top{padding:0 10px 0 14px}.ed-top .save{padding-left:10px}
   .doc{width:auto;padding:0 18px}
   .d-title{font-size:17px;padding-bottom:10px;margin-bottom:10px}.d-note{font-size:12px;margin-bottom:10px}.d-strip{height:100px;margin:0 -6px 10px}.d-p{font-size:14px;line-height:1.85}.d-q{font-size:16.5px;margin-top:6px}.d-q:before{font-size:26px}
@@ -211,7 +230,7 @@ footer nav{display:flex;gap:18px}footer a{text-decoration:none}footer a:hover{co
 
 <header class="nav in" style="animation-delay:0s">
   <a class="mark" href="/" aria-label="후기씨앗 홈"><svg viewBox="0 0 48 48" aria-hidden="true"><path d="M24 41V23" stroke="currentColor" stroke-width="3.6" stroke-linecap="round"/><path d="M24 29c-9 0-14-7-14-13 8 0 14 6 14 13z" fill="currentColor" opacity=".7"/><path d="M24 24c1-9 8-15 15-15-1 9-8 15-15 15z" fill="currentColor"/></svg>후기씨앗</a>
-  <nav class="links"><a href="#how">사용법</a><a href="https://app.hugissiat.com">앱</a><a href="#start" class="solid" id="navCta">시작하기</a></nav>
+  <nav class="links"><a href="#how">사용법</a><a href="https://app.hugissiat.com">앱</a><a href="#start" class="solid" id="navCta" data-login>시작하기</a></nav>
 </header>
 
 <main>
@@ -220,16 +239,15 @@ footer nav{display:flex;gap:18px}footer a{text-decoration:none}footer a:hover{co
   <h1><span class="ln in" style="animation-delay:.22s">잘 뜨는 구성에,</span><span class="ln in" style="animation-delay:.34s"><em>내 경험</em>만 담아요</span></h1>
   <p class="lead in" style="animation-delay:.48s">네이버 검색 상위 글의 구성은 그대로, 내용은 내가 다녀온 기록으로. 색은 내 블로그에 맞추고, 발행은 내가 눌러요.</p>
   <div class="cta in" id="start" style="animation-delay:.6s">
-    <a class="btn nv" href="/auth/naver/login" id="nLogin"><span class="n">N</span>네이버로 시작하기</a>
-    <a class="btn gg" href="/auth/google/login" id="gLogin"><svg width="19" height="19" viewBox="0 0 48 48" aria-hidden="true"><path fill="#EA4335" d="M24 9.5c3.5 0 6.6 1.2 9.1 3.6l6.8-6.8C35.8 2.4 30.3 0 24 0 14.6 0 6.6 5.4 2.7 13.3l7.9 6.1C12.5 13.6 17.8 9.5 24 9.5z"/><path fill="#4285F4" d="M46.5 24.5c0-1.6-.1-3.1-.4-4.5H24v9h12.7c-.6 3-2.3 5.5-4.8 7.2l7.7 6c4.5-4.2 6.9-10.3 6.9-17.7z"/><path fill="#FBBC05" d="M10.6 28.6c-.5-1.4-.8-3-.8-4.6s.3-3.2.8-4.6l-7.9-6.1C1 16.6 0 20.2 0 24s1 7.4 2.7 10.7l7.9-6.1z"/><path fill="#34A853" d="M24 48c6.5 0 11.9-2.1 15.9-5.8l-7.7-6c-2.2 1.5-5 2.3-8.2 2.3-6.2 0-11.5-4.1-13.4-9.9l-7.9 6.1C6.6 42.6 14.6 48 24 48z"/></svg>구글로 시작하기</a>
+    <button class="btn go" type="button" data-login>시작하기<span class="arr"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12h13m-5-6 6 6-6 6" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></span></button>
   </div>
-  <div class="micro in" style="animation-delay:.7s">가입 없이 쓰던 계정으로 · 무료</div>
+  <div class="micro in" style="animation-delay:.7s">네이버·구글 계정으로 바로 · 무료</div>
   <div id="msgWrap"></div>
 
   <div class="stage in" id="stage" style="animation-delay:.8s" role="img" aria-label="후기씨앗 앱 기록의 메모와 사진이 네이버 블로그 에디터로 옮겨져 글이 되고, 임시저장되는 장면">
     <div class="ed" id="ed">
       <div class="ed-top"><span class="logo">blog</span><span class="sp"></span><span class="save" id="save">저장<b id="saveN">0</b></span><span class="pub">발행</span></div>
-      <div class="ed-tools"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2.5"/><circle cx="9" cy="10" r="1.8"/><path d="m21 16-5-5-8 8"/></svg><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 7h4v4c0 3-1.5 5-4 6M15 7h4v4c0 3-1.5 5-4 6"/></svg><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12h16"/></svg><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s-6-5.3-6-10a6 6 0 0 1 12 0c0 4.7-6 10-6 10z"/><circle cx="12" cy="11" r="2"/></svg><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 10h18M9 4v16"/></svg><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/></svg><span class="kw">용산 한정식 · 상위 10개 글 구성</span></div>
+      <div class="ed-tools"><span class="set">소제목 · 라인&amp;따옴표</span><span class="set">사진 · 2장 묶기</span><span class="set">글꼴 · 마루부리</span><span class="kw">용산 한정식 · 상위 10개 글 구성</span></div>
       <div class="toast" id="toast"><b><svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12.5l4.2 4.2L19 7" stroke="#fff" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/></svg></b>임시저장했어요</div>
       <div class="ed-body"><div class="doc">
         <div class="d-title"><span id="tt">용산 한정식, 엄마랑 조용히 먹은 보리굴비 정식</span><span class="caret"></span></div>
@@ -285,13 +303,23 @@ footer nav{display:flex;gap:18px}footer a{text-decoration:none}footer a:hover{co
 
 <section class="end reveal">
   <h2>AI 글은 많아도,<br><em>내 경험</em>은 나만 써요</h2>
-  <p class="lead">쓰던 네이버·구글 계정으로 바로 시작해요.</p>
-  <div class="cta" id="cta2">
-    <a class="btn nv" href="/auth/naver/login"><span class="n">N</span>네이버로 시작하기</a>
-    <a class="btn gg" href="/auth/google/login">구글로 시작하기</a>
-  </div>
+  <p class="lead">가입 없이 쓰던 계정으로 바로 시작해요.</p>
+  <div class="cta" id="cta2"><button class="btn go" type="button" data-login>시작하기<span class="arr"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12h13m-5-6 6 6-6 6" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></span></button></div>
 </section>
 </main>
+
+<div class="lm" id="lm" hidden>
+  <div class="lm-bg" data-close></div>
+  <div class="lm-box" tabindex="-1" role="dialog" aria-modal="true" aria-labelledby="lmT">
+    <button class="lm-x" type="button" data-close aria-label="닫기"><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M6 6l12 12M18 6 6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button>
+    <div class="lm-mark"><svg viewBox="0 0 48 48" aria-hidden="true"><path d="M24 41V23" stroke="currentColor" stroke-width="3.6" stroke-linecap="round"/><path d="M24 29c-9 0-14-7-14-13 8 0 14 6 14 13z" fill="currentColor" opacity=".7"/><path d="M24 24c1-9 8-15 15-15-1 9-8 15-15 15z" fill="currentColor"/></svg></div>
+    <div class="lm-t" id="lmT">후기씨앗 시작하기</div>
+    <p class="lm-s">쓰던 계정으로 로그인해요. 따로 가입은 없어요.</p>
+    <a class="lb nv" href="/auth/naver/login"><span class="n">N</span>네이버로 계속하기</a>
+    <a class="lb gg" href="/auth/google/login"><svg width="19" height="19" viewBox="0 0 48 48" aria-hidden="true"><path fill="#EA4335" d="M24 9.5c3.5 0 6.6 1.2 9.1 3.6l6.8-6.8C35.8 2.4 30.3 0 24 0 14.6 0 6.6 5.4 2.7 13.3l7.9 6.1C12.5 13.6 17.8 9.5 24 9.5z"/><path fill="#4285F4" d="M46.5 24.5c0-1.6-.1-3.1-.4-4.5H24v9h12.7c-.6 3-2.3 5.5-4.8 7.2l7.7 6c4.5-4.2 6.9-10.3 6.9-17.7z"/><path fill="#FBBC05" d="M10.6 28.6c-.5-1.4-.8-3-.8-4.6s.3-3.2.8-4.6l-7.9-6.1C1 16.6 0 20.2 0 24s1 7.4 2.7 10.7l7.9-6.1z"/><path fill="#34A853" d="M24 48c6.5 0 11.9-2.1 15.9-5.8l-7.7-6c-2.2 1.5-5 2.3-8.2 2.3-6.2 0-11.5-4.1-13.4-9.9l-7.9 6.1C6.6 42.6 14.6 48 24 48z"/></svg>구글로 계속하기</a>
+    <p class="lm-f">계속하면 <a href="/terms.html">이용약관</a>과 <a href="/privacy.html">개인정보처리방침</a>에 동의하게 돼요.</p>
+  </div>
+</div>
 
 <footer><span>© 2026 PortPapa · hello@hugissiat.com</span><nav><a href="https://app.hugissiat.com">앱</a><a href="/terms.html">이용약관</a><a href="/privacy.html">개인정보처리방침</a></nav></footer>
 
@@ -308,8 +336,16 @@ footer nav{display:flex;gap:18px}footer a{text-decoration:none}footer a:hover{co
     if (!j) return;
     const go = '<a class="btn nv" href="/studio">' + (j.nickname ? j.nickname + '님, ' : '') + '이어서 하기<span class="arr"><svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M5 12h13m-5-6 6 6-6 6" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></span></a>';
     $('#start').innerHTML = go; $('#cta2').innerHTML = go;
-    $('#navCta').textContent = '내 공간'; $('#navCta').href = '/studio';
+    $('#navCta').textContent = '내 공간'; $('#navCta').href = '/studio'; $('#navCta').removeAttribute('data-login');
   }).catch(() => {});
+
+  // 로그인 선택 창
+  const lm = $('#lm'); let lastFocus = null;
+  const openLm = () => { lastFocus = document.activeElement; lm.hidden = false; document.body.style.overflow = 'hidden'; setTimeout(() => lm.querySelector('.lm-box').focus({ preventScroll: true }), 50); };
+  const closeLm = () => { lm.hidden = true; document.body.style.overflow = ''; if (lastFocus) lastFocus.focus(); };
+  document.addEventListener('click', e => { const t = e.target.closest('[data-login]'); if (t) { e.preventDefault(); openLm(); } if (e.target.closest('[data-close]')) closeLm(); });
+  document.addEventListener('keydown', e => { if (e.key === 'Escape' && !lm.hidden) closeLm(); });
+  if (q === 'need' || q === 'fail') openLm();
 
   // 시그니처 (Stageshow 방식: 한 화면, 원인 있는 움직임, 결과에서 멈춤)
   const TITLE = '용산 한정식, 엄마랑 조용히 먹은 보리굴비 정식';

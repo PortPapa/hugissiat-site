@@ -21,7 +21,9 @@ function toast(m) { const t = $('#toast'); t.textContent = m; t.classList.add('s
 /* ---------- 사진 자리 (실제 사진 대신 부드러운 자리표시) ---------- */
 const HUES = [[246, 226, 233], [230, 238, 227], [255, 239, 214], [226, 236, 246], [240, 232, 250]];
 let phN = 0;
+const FOOD = ["/img/food-1.jpg", "/img/food-3.jpg"];
 function ph(label, w = 4, h = 3) {
+  if (["food", "compare", "summary"].includes(st.tpl) && !/지도|영수증|메뉴판|간판|외관/.test(label)) return FOOD[(phN++) % FOOD.length];
   const c = HUES[(phN++) % HUES.length], W = 800, H = Math.round(W * h / w);
   const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}"><defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="rgb(${c})"/><stop offset="1" stop-color="rgb(${c.map(v => Math.max(0, v - 18))})"/></linearGradient></defs><rect width="100%" height="100%" fill="url(#g)"/><g transform="translate(${W / 2 - 34},${H / 2 - 46})" fill="none" stroke="rgba(60,60,60,.35)" stroke-width="5"><rect x="0" y="12" width="68" height="50" rx="10"/><circle cx="34" cy="37" r="13"/><path d="M22 12l6-10h12l6 10"/></g><text x="50%" y="${H / 2 + 42}" text-anchor="middle" font-family="sans-serif" font-size="30" fill="rgba(60,60,60,.55)">${esc(label)}</text></svg>`;
   return 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svg);
@@ -124,6 +126,7 @@ const ICON = {
   align: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 6h16M7 10h10M4 14h16M7 18h10"/></svg>'
 };
 function renderBar() {
+  if (!$('#seBar')) return;
   const d = D();
   const tools = [['photo', '사진', 'photo'], ['video', '동영상'], ['sticker', '스티커', 'sticker'], '|', ['quote', '인용구', 'quote', true], ['line', '구분선', 'line', true], ['place', '장소'], ['link', '링크'], ['table', '표'], '|', ['font', fontName(d.font), 'font', true], ['align', d.align === 'center' ? '가운데' : '왼쪽', 'align']];
   $('#seBar').innerHTML = tools.map(t => t === '|' ? '<span class="se-sep"></span>' : `<button type="button" class="se-tool${t[2] === 'sticker' && d.sticker ? ' on' : ''}" data-k="${t[2] || ''}">${ICON[t[0]]}<span>${t[1]}${t[3] ? '<span class="dd">▾</span>' : ''}</span></button>`).join('');
@@ -175,36 +178,86 @@ function sw(key, colors, label, allowNone) {
   const d = D();
   return `<div class="row"><label>${label}</label><div class="sw" data-key="${key}">${colors.map(c => `<button type="button" data-v="${c}" class="${c ? '' : 'none'}${String(d[key] || '') === c ? ' on' : ''}" style="${c ? 'background:' + c : ''}" title="${c || '안 씀'}"></button>`).join('')}<input type="color" class="cpick" data-ck="${key}" value="${/^#[0-9a-f]{6}$/i.test(d[key] || '') ? d[key] : '#888888'}" title="직접 고르기"></div></div>`;
 }
+let openRow = '';
+const CHEV = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6l6 6-6 6" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+const dot = c => c ? `<i style="background:${c}"></i>` : '';
+function swRaw(key, colors) {
+  const d = D();
+  return `<div class="sw" data-key="${key}">${colors.map(c => `<button type="button" data-v="${c}" class="${c ? '' : 'none'}${String(d[key] || '') === c ? ' on' : ''}" style="${c ? 'background:' + c : ''}" title="${c || '안 씀'}"></button>`).join('')}<input type="color" class="cpick" data-ck="${key}" value="${/^#[0-9a-f]{6}$/i.test(d[key] || '') ? d[key] : '#888888'}" title="직접 고르기"></div>`;
+}
+const segRaw = (key, opts) => { const d = D(); return `<div class="seg" data-key="${key}">${opts.map(([v, n]) => `<button type="button" data-v="${v}" class="${String(d[key]) === String(v) ? 'on' : ''}">${n}</button>`).join('')}</div>`; };
+function quoteGrid(cur, key, extra = []) {
+  const d = D();
+  const pv = l => `<div class="se-viewer se-theme-default pv">${seQuote('소제목 예시', l, { ...d, size: 'fs16' }, { fs: 'fs16' })}</div>`;
+  return `<div class="qgrid">${O.quotes.map(([k, n]) => `<button type="button" data-${key}="${k}" class="${cur === k ? 'on' : ''}"><div class="t">${n}</div>${pv(k)}</button>`).join('')}${extra.join('')}</div>`;
+}
+function designRows() {
+  const d = D();
+  const subVal = d.sub === 'quote' ? '인용구 · ' + qName(d.subQuote) : d.sub === 'section' ? '소제목 칸' : '굵은 글씨';
+  const sizeName = (O.sizes.find(x => x[0] === d.size) || [0, d.size])[1];
+  return [
+    ['글자', [
+      ['font', '글꼴', fontName(d.font), () => `<div class="flist">${O.fonts.map(([k, n]) => `<button type="button" data-f="${k}" class="${d.font === k ? 'on' : ''}" style="font-family:${fontCss(k)}">${n}</button>`).join('')}</div>`],
+      ['size', '본문 크기', sizeName, () => segRaw('size', O.sizes)],
+      ['align', '정렬', d.align === 'center' ? '가운데' : '왼쪽', () => segRaw('align', [['center', '가운데'], ['left', '왼쪽']])],
+      ['short', '줄 나눔', d.short ? '한 줄씩 끊기' : '문단으로', () => segRaw('short', [[true, '한 줄씩 끊기'], [false, '문단으로']])],
+    ]],
+    ['꾸밈', [
+      ['sub', '소제목', subVal, () => quoteGrid(d.sub === 'quote' ? d.subQuote : '', 'q', [`<button type="button" data-subm="section" class="${d.sub === 'section' ? 'on' : ''}"><div class="t">소제목 칸</div></button>`, `<button type="button" data-subm="bold" class="${d.sub === 'bold' ? 'on' : ''}"><div class="t">굵은 글씨</div></button>`])],
+      ['quote', '강조 한 문장', qName(d.quote), () => quoteGrid(d.quote, 'eq')],
+      ['line', '구분선', lName(d.line), () => `<div class="qgrid">${O.lines.map(([k, n]) => `<button type="button" data-l="${k}" class="${d.line === k ? 'on' : ''}"><div class="t">${n}</div><div class="se-viewer se-theme-default pv">${seLine({ ...d, line: k })}</div></button>`).join('')}<button type="button" data-l="none" class="${d.line === 'none' ? 'on' : ''}"><div class="t">안 씀</div></button></div>`],
+      ['photo', '사진', d.photo === 'strip' ? '2~3장 묶기' : '한 장씩', () => segRaw('photo', [['strip', '2~3장 묶기'], ['single', '한 장씩']])],
+      ['sticker', '스티커', d.sticker ? '써요' : '안 써요', () => segRaw('sticker', [[true, '써요'], [false, '안 써요']])],
+    ]],
+    ['색', [
+      ['mycolor', '내 블로그 색', st.palette ? (st.palette.name || st.palette.blog) : '맞추기', () => '<div class="mycolor" id="myColor"></div>'],
+      ['subColor', '포인트 글자색', dot(d.subColor) + (d.subColor || '#000000'), () => swRaw('subColor', O.textColors)],
+      ['hl', '강조', dot(d.hlMode === 'solid' ? d.solid : d.highlight) + (d.hlMode === 'solid' ? '진한 배경' : (d.highlight ? '형광펜' : '안 씀')), () => segRaw('hlMode', [['mark', '형광펜'], ['solid', '진한 배경']]) + '<div style="height:10px"></div>' + (d.hlMode === 'solid' ? swRaw('solid', O.solids) : swRaw('highlight', O.highlights))],
+      ['box', '박스·표 채우기', dot(d.boxFill) + (d.boxFill ? '채움' : '인용구'), () => '<div class="mut" style="margin:0 0 6px">이용 정보 박스</div>' + swRaw('boxFill', ['', ...O.boxes]) + '<div class="mut" style="margin:12px 0 6px">표 머리</div>' + swRaw('tableFill', ['', ...O.boxes, ...O.solids])],
+      ['textColor', '본문 글자색', dot(d.textColor) + (d.textColor || '#000000'), () => swRaw('textColor', O.textColors)],
+    ]],
+    ['대가 표기', [
+      ['notice', '위치', { top: '맨 위', bottom: '맨 아래', none: '안 넣음' }[d.notice], () => segRaw('notice', [['top', '맨 위'], ['bottom', '맨 아래'], ['none', '안 넣음']])],
+      ['noticeText', '문구', d.notice === 'none' ? '-' : '수정', () => `<textarea data-text="noticeText">${esc(d.noticeText)}</textarea>`],
+      ['sign', '마지막 서명', d.sign ? '있음' : '없음', () => `<textarea data-text="sign" placeholder="예: 글/사진 ⓒ 지아야가자">${esc(d.sign)}</textarea>`],
+    ]],
+  ];
+}
 function renderDesign() {
   const d = D();
-  $('#design').innerHTML =
-    seg('align', [['center', '가운데'], ['left', '왼쪽']], '정렬') +
-    seg('size', O.sizes, '본문 크기') +
-    seg('short', [[true, '한 줄씩 끊기'], [false, '문단으로']], '줄 나눔') +
-    seg('sub', [['quote', '인용구'], ['section', '소제목'], ['bold', '굵은 글씨']], '소제목 방식') +
-    (d.sub === 'quote' ? seg('subQuote', O.quotes, '소제목 인용구') : '') +
-    seg('quote', O.quotes, '강조 한 문장') +
-    seg('photo', [['strip', '2~3장 묶기'], ['single', '한 장씩']], '사진') +
-    sw('textColor', O.textColors, '본문 글자색') +
-    sw('subColor', O.textColors, '포인트 글자색 (소제목)') +
-    seg('hlMode', [['mark', '형광펜'], ['solid', '진한 배경']], '강조 배경') +
-    (d.hlMode === 'solid' ? sw('solid', O.solids, '진한 배경색 (흰 글씨)') : sw('highlight', O.highlights, '형광펜 색', true)) +
-    sw('boxFill', ['', ...O.boxes], '이용 정보 박스 채우기', true) +
-    sw('tableFill', ['', ...O.boxes, ...O.solids], '표 머리 채우기', true) +
-    seg('sticker', [[true, '써요'], [false, '안 써요']], '스티커') +
-    seg('notice', [['bottom', '맨 아래'], ['top', '맨 위'], ['none', '안 넣음']], '대가 표기') +
-    (d.notice !== 'none' ? `<div class="row"><textarea data-text="noticeText">${esc(d.noticeText)}</textarea></div>` : '') +
-    `<div class="row"><label>마지막 서명 (선택)</label><textarea data-text="sign" placeholder="예: 글/사진 ⓒ 지아야가자">${esc(d.sign)}</textarea></div>`;
-  $('#design').querySelectorAll('.seg,.sw').forEach(g => g.querySelectorAll('button').forEach(b => b.onclick = () => {
-    let v = b.dataset.v; if (v === 'true') v = true; else if (v === 'false') v = false;
-    d[g.dataset.key] = v; changed();
-  }));
-  $('#design').querySelectorAll('.cpick').forEach(c => c.oninput = () => { d[c.dataset.ck] = c.value; save(); renderDoc(); });
-  $('#design').querySelectorAll('[data-text]').forEach(t => t.oninput = () => { d[t.dataset.text] = t.value; save(); renderDoc(); });
+  $('#design').innerHTML = designRows().map(([g, rows]) => `<div class="dgrp"><div class="gt">${g}</div>${rows.map(([k, label, val, pick]) => `<button type="button" class="opt${openRow === k ? ' open' : ''}" data-row="${k}"><span>${label}</span><em>${val}</em>${CHEV}</button>${openRow === k ? `<div class="pick">${pick()}</div>` : ''}`).join('')}</div>`).join('');
+  const box = $('#design');
+  box.querySelectorAll('.opt').forEach(b => b.onclick = () => { openRow = openRow === b.dataset.row ? '' : b.dataset.row; renderDesign(); });
+  box.querySelectorAll('.seg,.sw').forEach(g => g.querySelectorAll('button').forEach(b => b.onclick = () => { let v = b.dataset.v; if (v === 'true') v = true; else if (v === 'false') v = false; d[g.dataset.key] = v; changed(); }));
+  box.querySelectorAll('.cpick').forEach(c => c.oninput = () => { d[c.dataset.ck] = c.value; save(); renderDoc(); });
+  box.querySelectorAll('[data-text]').forEach(t => t.oninput = () => { d[t.dataset.text] = t.value; save(); renderDoc(); });
+  box.querySelectorAll('[data-f]').forEach(b => b.onclick = () => { d.font = b.dataset.f; changed(); });
+  box.querySelectorAll('[data-q]').forEach(b => b.onclick = () => { d.sub = 'quote'; d.subQuote = b.dataset.q; changed(); });
+  box.querySelectorAll('[data-subm]').forEach(b => b.onclick = () => { d.sub = b.dataset.subm; changed(); });
+  box.querySelectorAll('[data-eq]').forEach(b => b.onclick = () => { d.quote = b.dataset.eq; changed(); });
+  box.querySelectorAll('[data-l]').forEach(b => b.onclick = () => { d.line = b.dataset.l; changed(); });
   const a = prof().ana;
-  $('#designFrom').textContent = a ? `구성: ${/^kw:/.test(st.blog) ? st.blog.slice(3) + ' 상위 글' : (prof().name || st.blog)}` : '';
-  renderMyColor();
+  $('#designFrom').textContent = a ? (/^kw:/.test(st.blog) ? st.blog.slice(3) + ' 상위 글 기준' : (prof().name || st.blog) + ' 기준') : '';
+  if ($('#myColor')) renderMyColor();
 }
+// 단계 탭
+let step = 'src';
+function goStep(k) {
+  step = k;
+  document.querySelectorAll('#steps button').forEach(b => b.classList.toggle('on', b.dataset.step === k));
+  document.querySelectorAll('.pane').forEach(p => p.hidden = p.dataset.pane !== k);
+  $('.panel').scrollTop = 0;
+}
+document.querySelectorAll('#steps button').forEach(b => b.onclick = () => goStep(b.dataset.step));
+document.querySelectorAll('[data-go]').forEach(b => b.onclick = () => goStep(b.dataset.go));
+// 미리보기에서 블록을 누르면 그 설정으로
+$('#doc').addEventListener('click', e => {
+  const c = e.target.closest('.se-component'); if (!c) return;
+  const cl = c.className;
+  const k = /se-quotation/.test(cl) ? (/sub/.test(c.dataset.k || '') ? 'sub' : 'sub') : /horizontalLine/.test(cl) ? 'line' : /imageStrip|se-image/.test(cl) ? 'photo' : /se-table/.test(cl) ? 'box' : /sticker/.test(cl) ? 'sticker' : /se-text/.test(cl) ? 'font' : '';
+  if (!k) return; openRow = k; goStep('design'); renderDesign();
+  const row = document.querySelector('[data-row="' + k + '"]'); if (row) row.scrollIntoView({ block: 'center', behavior: 'smooth' });
+});
 
 /* ---------- 내 블로그 색 ---------- */
 const MILD = { textColor: '#000000', subColor: '#000000', hlMode: 'mark', highlight: '#fff3b0', solid: '#333333', boxFill: '#f5f5f5', tableFill: '#f1f1f1' };
@@ -237,7 +290,7 @@ function pickPalette(sk, cols) {
 }
 function paletteDesign() { const p = st.palette && st.palette.colors || MILD; const o = {}; Object.keys(MILD).forEach(k => o[k] = p[k]); return o; }
 async function loadMyColor(id) {
-  $('#myColor').innerHTML = '<div class="load"><i></i>내 블로그 스킨을 보는 중…</div>';
+  if ($('#myColor')) $('#myColor').innerHTML = '<div class="load"><i></i>내 블로그 스킨을 보는 중…</div>';
   try {
     const j = await (await fetch('/api/skin?blog=' + encodeURIComponent(id))).json();
     if (!j.ok) throw new Error(j.error || '불러오지 못했어요');
@@ -245,7 +298,7 @@ async function loadMyColor(id) {
     st.myBlog = id; st.palette = { blog: id, name: j.name, headImg: j.headImg, colors: pickPalette(j, cols) };
     Object.values(st.profiles).forEach(p => { if (p.design) Object.assign(p.design, paletteDesign()); });
     save(); changed(); toast(st.palette.colors._src === 'skin' ? '내 블로그 색을 맞췄어요' : '눈에 띄는 색이 없어 무난한 색으로 했어요');
-  } catch (e) { $('#myColor').innerHTML = '<div class="err">' + esc(e.message) + '</div>'; setTimeout(renderMyColor, 2500); }
+  } catch (e) { if ($('#myColor')) $('#myColor').innerHTML = '<div class="err">' + esc(e.message) + '</div>'; setTimeout(renderMyColor, 2500); }
 }
 function renderMyColor() {
   const el = $('#myColor'); if (!el) return;
@@ -325,7 +378,7 @@ function renderAna() {
   const subs = ps.length ? Math.round(ps.reduce((x, q) => x + Object.values(q.quoteStyles || {}).reduce((a, b) => a + b, 0) + ((q.comps || {}).sectionTitle || 0), 0) / ps.length) : 0;
   const places = ps.filter(q => q.places).length;
   $('#anaBox').innerHTML = `<div class="sum"><div><b>${imgs}장</b><span>글 하나 사진</span></div><div><b>${chars.toLocaleString()}자</b><span>글 하나 길이</span></div><div><b>${subs}개</b><span>소제목·인용구</span></div><div><b>${places}/${ps.length}</b><span>장소 지도 넣은 글</span></div></div>
-  <div class="posts">${a.posts.map(q => `<label><input type="checkbox" data-l="${q.logNo}" ${(p.skip || []).includes(q.logNo) ? '' : 'checked'}><span>${esc(dec(q.title))}<br><small>${q.rank ? `<b class="rk">${q.rank}위</b> ${esc(q.nick || q.blogId)} · ` : esc(q.category ? q.category + ' · ' : '')}사진 ${q.images} · <a href="${q.url}" target="_blank" rel="noopener">원문</a></small></span></label>`).join('')}</div>
+  <details><summary>읽은 글 ${a.posts.length}개 보기</summary><div class="posts">${a.posts.map(q => `<label><input type="checkbox" data-l="${q.logNo}" ${(p.skip || []).includes(q.logNo) ? '' : 'checked'}><span>${esc(dec(q.title))}<br><small>${q.rank ? `<b class="rk">${q.rank}위</b> ${esc(q.nick || q.blogId)} · ` : esc(q.category ? q.category + ' · ' : '')}사진 ${q.images} · <a href="${q.url}" target="_blank" rel="noopener">원문</a></small></span></label>`).join('')}</div></details>
   <div class="mut" style="margin:8px 0 0"><a href="#" id="reAna" style="color:var(--sage-d)">다시 읽기</a></div>`;
   $('#anaBox').querySelectorAll('[data-l]').forEach(c => c.onchange = () => {
     const s = new Set(p.skip || []); c.checked ? s.delete(c.dataset.l) : s.add(c.dataset.l); p.skip = [...s];
@@ -346,7 +399,7 @@ function renderTone() {
 }
 function renderTpls() {
   $('#tpls').innerHTML = T.map(t => `<button type="button" class="tpl${st.tpl === t.id ? ' on' : ''}" data-t="${t.id}"><b>${esc(t.name)}</b><small>${esc(t.desc)}</small><span class="tg">${esc(t.tag)}</span></button>`).join('');
-  $('#tpls').querySelectorAll('.tpl').forEach(b => b.onclick = () => { st.tpl = b.dataset.t; save(); renderTpls(); renderDoc(); if (window.innerWidth < 820) $('#seBar').scrollIntoView({ behavior: 'smooth' }); });
+  $('#tpls').querySelectorAll('.tpl').forEach(b => b.onclick = () => { st.tpl = b.dataset.t; save(); renderTpls(); renderDoc(); if (window.innerWidth < 900) $('#paper').scrollIntoView({ behavior: 'smooth' }); });
 }
 
 /* ---------- 설정 파일 ---------- */
@@ -439,10 +492,8 @@ $('#blogForm').onsubmit = e => { e.preventDefault(); const v = $('#blogId').valu
 $('#reviewOnly').onchange = () => { if (st.blog && !/^kw:/.test(st.blog)) analyze(st.blog); };
 $('#viewMobile').onclick = () => { $('#paper').classList.add('mobile'); $('#viewMobile').classList.add('on'); $('#viewPc').classList.remove('on'); };
 $('#viewPc').onclick = () => { $('#paper').classList.remove('mobile'); $('#viewPc').classList.add('on'); $('#viewMobile').classList.remove('on'); };
-$('#showSrc').onchange = e => $('#paper').classList.toggle('no-src', !e.target.checked);
 function changed() { save(); renderBar(); renderDesign(); renderDoc(); }
 function renderAll() { renderBlogs(); renderAna(); renderTone(); renderTpls(); renderBar(); renderDesign(); renderDoc(); }
-$('#paper').classList.add('mobile');
 setMode(st.mode || 'kw');
 renderAll();
 fetch('/api/me').then(r => r.ok ? r.json() : null).then(j => {
