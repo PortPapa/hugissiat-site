@@ -277,7 +277,23 @@ const qName = k => (O.quotes.find(x => x[0] === k) || [k, k])[1];
 const lName = k => k === 'none' ? '안 씀' : (O.lines.find(x => x[0] === k) || [k, k])[1];
 function buildProfile() {
   const p = prof(), d = D(), tpl = T.find(t => t.id === st.tpl) || T[0], ps = usedPosts();
-  const blk = b => ({ image: `사진 1장 (${b.label})`, strip: d.photo === 'strip' ? `사진 ${b.n}장 묶음` : `사진 ${b.n}장 한 장씩`, text: `본문 ${b.lines.length}~${b.lines.length + 1}줄`, sub: `소제목 (예: "${b.text}")`, quote: `강조 한 문장 (예: "${b.text}")`, line: '구분선', place: '장소 지도', info: '이용 정보 박스 (주소·영업시간·휴무·주차·예약)', table: '표', sticker: '스티커', link: '상품 링크', notice: '대가 표기' }[b.t]);
+  const blk = b => {
+    switch (b.t) {
+      case 'image': return `사진 1장 (${b.label})`;
+      case 'strip': return d.photo === 'strip' ? `사진 ${b.n}장 묶음` : `사진 ${b.n}장 한 장씩`;
+      case 'text': return `본문 ${b.lines.length}~${b.lines.length + 1}줄`;
+      case 'sub': return `소제목 (예: "${b.text}")`;
+      case 'quote': return `강조 한 문장 (예: "${b.text}")`;
+      case 'line': return '구분선';
+      case 'place': return '장소 지도';
+      case 'info': return '이용 정보 박스 (주소·영업시간·휴무·주차·예약)';
+      case 'table': return '표';
+      case 'sticker': return '스티커';
+      case 'link': return '상품 링크';
+      case 'notice': return '대가 표기';
+      default: return b.t;
+    }
+  };
   const order = tpl.blocks.filter(b => !(b.t === 'sticker' && !d.sticker) && !(b.t === 'line' && d.line === 'none') && !(b.t === 'notice' && d.notice !== 'bottom')).map((b, i) => `${i + 1}. ${blk(b)}${b.src ? ` ← 후기씨앗: ${b.src}` : ''}`);
   if (d.notice === 'top') order.unshift('0. 대가 표기');
   const en = top(sum(ps, 'endings')).slice(0, 6).map(([k]) => '~' + k);
@@ -324,6 +340,7 @@ ${JSON.stringify(json, null, 2)}
 \`\`\`
 `;
 }
+window.HS_buildProfile = buildProfile;
 $('#dl').onclick = () => {
   const md = buildProfile(); const b = new Blob([md], { type: 'text/markdown;charset=utf-8' });
   const a = document.createElement('a'); a.href = URL.createObjectURL(b); a.download = `후기씨앗 글쓰기 설정 - ${prof().name || st.blog || '내 블로그'}.md`; a.click(); setTimeout(() => URL.revokeObjectURL(a.href), 2000);
