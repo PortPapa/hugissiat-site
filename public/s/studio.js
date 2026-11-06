@@ -53,6 +53,7 @@ function seQuote(lines, layout, d, o = {}, src) {
   return wrap(`se-quotation se-l-${layout}`, `<div class="se-section se-section-quotation se-l-${layout}"><blockquote class="se-quotation-container"><div class="se-module se-module-text se-quote">${ps}</div></blockquote></div>`, src);
 }
 function seSub(text, d, src) {
+  if (d.sub === 'quote' && d.subQuote === 'quotation_line') return seQuote('[[›]] ' + text, d.subQuote, d, { fs: 'fs19', color: '#222222', boldFirst: true }, src);
   if (d.sub === 'quote') return seQuote(text, d.subQuote, d, { fs: d.subSize, color: d.subColor }, src);
   if (d.sub === 'section') return wrap('se-sectionTitle se-l-default', `<div class="se-section se-section-sectionTitle se-l-default"><div class="se-module se-module-text"><p class="se-text-paragraph se-text-paragraph-align-${d.align}">${span(text, d, { fs: d.subSize, bold: true, color: d.subColor })}</p></div></div>`, src);
   return wrap('se-text se-l-default', `<div class="se-section se-section-text se-l-default"><div class="se-module se-module-text">${para(text, d, { fs: 'fs19', bold: true, color: d.subColor })}</div></div>`, src);
@@ -102,9 +103,9 @@ function renderDoc() {
       firstText = false;
       out.push(seText(lines, d, b.src));
     }
-    else if (b.t === 'sub') out.push(seSub(b.text, d, b.src));
+    else if (b.t === 'sub') { if (d.line !== 'none' && out.length > 2) out.push(seLine(d)); out.push(seSub(b.text, d, b.src)); }
     else if (b.t === 'quote') out.push(seQuote(b.text, d.quote, d, {}, b.src));
-    else if (b.t === 'line') { if (d.line !== 'none') out.push(seLine(d)); }
+    else if (b.t === 'line') { /* 구분선은 소제목 앞에 자동으로 넣음 */ }
     else if (b.t === 'place') out.push(sePlace(b, b.src));
     else if (b.t === 'info') out.push(seTable(b.lines.map(l => { const m = l.replace(/^[^가-힣A-Za-z0-9]+\s*/, '').split(/:\s*/); return [m[0], m.slice(1).join(': ')]; }), d, b.src, { head: false }));
     else if (b.t === 'table') out.push(seTable(b.rows, d, b.src));
