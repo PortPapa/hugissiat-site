@@ -92,8 +92,27 @@ async function imgProxy(url) {
   return new Response(r.body, { status: r.status, headers: { 'content-type': r.headers.get('content-type') || 'image/png', 'cache-control': 'public, max-age=86400' } });
 }
 
+// 카카오톡·네이버·인스타 등 인앱 브라우저 → 기본 브라우저로
+const INAPP = /KAKAOTALK|NAVER\(inapp|FBAN|FBAV|Instagram|DaumApps|everytimeApp|BAND\/|Line\/|; wv\)/i;
+const ESCAPE = `<script>(function(){var ua=navigator.userAgent,u=location.href;
+if(/KAKAOTALK/i.test(ua)){location.href='kakaotalk://web/openExternal?url='+encodeURIComponent(u);return}
+if(/Line\\//i.test(ua)){if(!/openExternalBrowser=1/.test(u))location.replace(u+(u.indexOf('?')<0?'?':'&')+'openExternalBrowser=1');return}
+if(/Android/i.test(ua)){location.href='intent://'+u.replace(/^https?:\\/\\//,'')+'#Intent;scheme=https;package=com.android.chrome;S.browser_fallback_url='+encodeURIComponent(u)+';end';return}
+document.addEventListener('DOMContentLoaded',function(){var d=document.createElement('div');d.setAttribute('style','position:fixed;inset:0;z-index:2147483647;background:rgba(28,35,27,.55);display:flex;align-items:flex-end;justify-content:center;padding:16px;font-family:-apple-system,sans-serif');
+d.innerHTML='<div style="width:100%;max-width:420px;background:#fffdf8;border-radius:22px;padding:24px 20px 18px;text-align:center;color:#1c231b"><b style="font-size:18px">Safari에서 열어 주세요</b><p style="margin:8px 0 16px;font-size:14.5px;line-height:1.55;color:#555">앱 안 브라우저에서는 구글 로그인이 막혀요.<br>오른쪽 아래(또는 위) <b>···</b> 메뉴에서<br><b>Safari로 열기</b>를 눌러 주세요.</p><button id="hsCopy" style="width:100%;height:48px;border:0;border-radius:14px;background:#1c231b;color:#fff;font-size:15px;font-weight:600">주소 복사하기</button><button id="hsClose" style="margin-top:8px;width:100%;height:40px;border:0;background:none;color:#888;font-size:14px">그냥 볼게요</button></div>';
+document.body.appendChild(d);document.getElementById('hsCopy').onclick=function(){try{navigator.clipboard.writeText(u);this.textContent='복사했어요. Safari 주소창에 붙여 넣어 주세요'}catch(e){prompt('주소를 복사해 주세요',u)}};document.getElementById('hsClose').onclick=function(){d.remove()}})})();</script>`;
 export default {
   async fetch(req, env, ctx) {
+    const res = await route(req, env, ctx);
+    const ua = req.headers.get('user-agent') || '';
+    if (INAPP.test(ua) && (res.headers.get('content-type') || '').includes('text/html')) {
+      return new HTMLRewriter().on('head', { element(e) { e.prepend(ESCAPE, { html: true }); } }).transform(res);
+    }
+    return res;
+  },
+};
+async function route(req, env, ctx) {
+  {
     const url = new URL(req.url);
     const host = url.hostname;
     if (url.pathname === '/api/tester' && req.method === 'POST') return signup(req, env, ctx);
@@ -117,5 +136,5 @@ export default {
       return env.ASSETS.fetch(new Request(u2.toString(), req));
     }
     return env.ASSETS.fetch(req);
-  },
-};
+  }
+}
