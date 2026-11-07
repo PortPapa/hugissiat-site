@@ -186,7 +186,7 @@ footer nav{display:flex;gap:18px}footer a{text-decoration:none}footer a:hover{co
 
 <footer><span>© 2026 PortPapa · hello@hugissiat.com</span><nav><a href="https://hugissiat.com">hugissiat.com</a><a href="https://hugissiat.com/terms.html">이용약관</a><a href="/privacy.html">개인정보처리방침</a></nav></footer>
 <script>
-(()=>{const OPEN=false;const f=document.getElementById('tform');if(!f)return;const err=document.getElementById('terr');
+(()=>{const OPEN=true;const f=document.getElementById('tform');if(!f)return;const err=document.getElementById('terr');
 f.addEventListener('submit',async e=>{e.preventDefault();err.textContent='';const fd=new FormData(f);
   const o={name:fd.get('name'),email:fd.get('email'),website:fd.get('website'),agree:!!fd.get('agree')};
   if(!String(o.name).trim()){err.textContent='이름을 적어주세요';return}
