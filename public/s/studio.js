@@ -586,15 +586,15 @@ $('#driveSave').onclick = async () => {
     driveTok = await getDriveToken();
     step(20, '"후기씨앗" 폴더 찾는 중…');
     const root = await gFolder('후기씨앗', 'root');
-    const sk = await gFolder('스킬', root), me = await gFolder('hugissiat-writer', sk), sc = await gFolder('scripts', me);
+    const me = await gFolder('글쓰기 스킬', root);
     step(45, '스킬 파일 올리는 중…');
     const [md, js] = await Promise.all([fetch('/skill/SKILL.md').then(r => r.text()), fetch('/skill/hs-naver.js').then(r => r.text())]);
     await gPut('SKILL.md', me, md, 'text/markdown');
     step(65, '에디터 도우미 올리는 중…');
-    await gPut('hs-naver.js', sc, js, 'text/javascript');
+    await gPut('hs-naver.js', me, js, 'text/javascript');
     step(85, '내 스타일 올리는 중…');
     await gPut('style.md', me, buildProfile(), 'text/markdown');
-    step(100, '<span class="ok">저장했어요.</span> 후기씨앗 / 스킬 / hugissiat-writer');
+    step(100, '<span class="ok">저장했어요.</span> 후기씨앗 / 글쓰기 스킬');
     st.savedAt = new Date().toISOString(); save();
     $('#inst').hidden = false;
   } catch (e) { stat.innerHTML = '<span class="bad">' + esc(e.message) + '</span>'; }

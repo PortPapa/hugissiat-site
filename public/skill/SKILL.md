@@ -11,8 +11,8 @@ description: 후기씨앗 글쓰기. 체험단·협찬·리뷰 작성 가이드�
 
 ## 파일
 - `style.md`: 내 블로그 스타일. hugissiat.com에서 등록할 때마다 새로 저장된다. 매번 새로 읽는다.
-- `scripts/hs-naver.js`: 스마트에디터 입력 도우미. REPL에서 읽어 `eval`한 뒤 `makeHS(page, style)`로 쓴다.
-- 드라이브 경로: `후기씨앗 / YYYY년 M월 / DD 업체명 /` 안에 `YYYY-MM-DD 업체명.md`(또는 `후기 소스.md`)와 사진(`... 01.jpg` 순서).
+- `hs-naver.js`: 스마트에디터 입력 도우미. REPL에서 읽어 `eval`한 뒤 `makeHS(page, style)`로 쓴다.
+- 드라이브: 이 스킬은 `후기씨앗 / 글쓰기 스킬 /`에 있다. 경험 기록은 `후기씨앗 / YYYY년 M월 / DD 업체명 /` 안에 `YYYY-MM-DD 업체명.md`(또는 `후기 소스.md`)와 사진(`... 01.jpg` 순서).
 
 ## 순서
 
@@ -50,7 +50,7 @@ description: 후기씨앗 글쓰기. 체험단·협찬·리뷰 작성 가이드�
 
 ### 6. 에디터에 넣기
 ```js
-const code = await fs.readFile('<이 스킬 폴더>/scripts/hs-naver.js', 'utf8'); (0, eval)(code);
+const code = await fs.readFile('<이 스킬 폴더>/hs-naver.js', 'utf8'); (0, eval)(code);
 const P = await openTab(`https://blog.naver.com/${style.blogId}?Redirect=Write`);   // 에디터 탭은 하나만
 const H = makeHS(P, style);
 await H.open();            // 'DIALOG'면 작성 중인 글 안내: 사용자 글일 수 있으니 확인 후 진행
